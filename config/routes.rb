@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
-  resources :surveys
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  namespace :api do
+    namespace :v1 do
+      get 'surveys/index'
+      post 'surveys/create'
+      delete 'surveys/:id', to: 'surveys#destroy'
+    end
+  end
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+
+  # Root path to enter the react application
+  root 'survey#index'
 end
