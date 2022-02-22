@@ -9,5 +9,5 @@ Rails.application.routes.draw do
 
 
   # Root path to enter the react application
-  root 'survey#index'
+  root 'surveys#index'
 end
