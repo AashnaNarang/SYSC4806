@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_02_19_032712) do
+ActiveRecord::Schema[7.0].define(version: 2022_03_05_173455) do
   create_table "mc_options", force: :cascade do |t|
     t.string "option"
     t.datetime "created_at", null: false
@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_02_19_032712) do
   create_table "surveys", force: :cascade do |t|
     t.string "title"
     t.boolean "isLive"
-    t.time "wentLiveAt"
+    t.datetime "wentLiveAt", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'surveys/index'
       post 'surveys/create'
+      patch 'surveys/:id', to: 'surveys#update'
       delete 'surveys/:id', to: 'surveys#destroy'
       
       get 'mc_questions/:id', to: 'mc_questions#show'
