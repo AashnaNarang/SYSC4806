@@ -1,5 +1,5 @@
 class Api::V1::SurveysController < ApplicationController
-  before_action :set_survey, only: [:show, :edit, :update, :destroy]
+  before_action :set_survey, only: [:show, :edit, :update, :destroy, :text_questions]
   skip_before_action :verify_authenticity_token
   # GET /surveys or /surveys.json
   def index
@@ -9,6 +9,7 @@ class Api::V1::SurveysController < ApplicationController
 
   # GET /surveys/1 or /surveys/1.json
   def show
+    render json: @survey
   end
 
   # GET /surveys/new
@@ -18,6 +19,12 @@ class Api::V1::SurveysController < ApplicationController
 
   # GET /surveys/1/edit
   def edit
+  end
+
+  # GET /surveys/1/textquestions
+  def text_questions
+    @textquestions = @survey.text_questions
+    render json: @textquestions
   end
 
   # POST /surveys or /surveys.json
