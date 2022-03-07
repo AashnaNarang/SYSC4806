@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root 'surveys#index'
+
   namespace :api do
     namespace :v1 do
       get 'surveys/index'
@@ -7,7 +9,5 @@ Rails.application.routes.draw do
     end
   end
 
-
-  # Root path to enter the react application
-  root 'surveys#index'
+  get '*path', to: 'surveys#index', via: :all
 end
