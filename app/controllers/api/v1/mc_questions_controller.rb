@@ -24,7 +24,7 @@ class Api::V1::McQuestionsController < ApplicationController
         end
 
         if @mc_question.save
-          render json: {notice: 'Success!'}
+          render json: @mc_question
         else
           render json: {notice: "Failure! Could not save McQuestion due to #{@mc_question.errors.full_messages}"}
         end
@@ -41,11 +41,10 @@ class Api::V1::McQuestionsController < ApplicationController
 
           options = params.require(:mc_options).permit(:options => [])
           options[:options].each do |option|
-            puts(option)
             @mc_question.mc_options << McOption.create(option: option)
           end
 
-          render json: {notice: 'Success!'}
+          render json: @mc_question
         else
           render json: {notice: "Failure! Could not save McQuestion due to #{@mc_question.errors.full_messages}"}
         end
@@ -58,7 +57,7 @@ class Api::V1::McQuestionsController < ApplicationController
     def destroy
       @mc_question.destroy
   
-      render json: { notice: 'McQuestion was successfully removed.' }
+      render json: { notice: 'McQuestion was successfully removed' }
     end
   
     private
