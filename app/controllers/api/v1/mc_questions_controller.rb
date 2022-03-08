@@ -19,7 +19,6 @@ class Api::V1::McQuestionsController < ApplicationController
         options = params.require(:mc_options).permit(:options => [])
 
         options[:options].each do |option|
-          puts(option)
           @mc_question.mc_options << McOption.new(option: option)
         end
 
