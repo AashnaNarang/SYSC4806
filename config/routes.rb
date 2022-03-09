@@ -3,14 +3,14 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'surveys/index'
       get 'surveys/:id', to: 'surveys#show'
-      get 'surveys/:id/textquestions', to:'surveys#text_questions'
       post 'surveys/create'
       patch 'surveys/:id', to: 'surveys#update'
       delete 'surveys/:id', to: 'surveys#destroy'
       
-      post 'textquestion/create'
-      patch 'textquestion/:id', to: 'textquestion#update'
-      delete 'textquestion/:id', to: 'textquestion#destroy'
+      post 'text_questions/create', to: 'text_questions#create'
+      get 'text_questions/:id', to: 'text_questions#show'
+      patch 'text_questions/:id', to: 'text_questions#update'
+      delete 'text_questions/:id', to: 'text_questions#destroy'
 
       get 'mc_questions/:id', to: 'mc_questions#show'
       post 'mc_questions/create'
