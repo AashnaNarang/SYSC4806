@@ -14,7 +14,7 @@ const Home = () => {
             <ThemeProvider theme={darkTheme}>
                 <Typography className ="t" variant="h4" component="h3">
                     Hey surveyors, Welcome to SurveyLab!
-                </Typography>  
+                </Typography> 
                 <Paper variant="outlined" />
             </ThemeProvider>
         </Card>
