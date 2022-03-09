@@ -6,6 +6,11 @@ Rails.application.routes.draw do
       get 'surveys/index'
       post 'surveys/create'
       delete 'surveys/:id', to: 'surveys#destroy'
+      
+      get 'mc_questions/:id', to: 'mc_questions#show'
+      post 'mc_questions/create'
+      delete 'mc_questions/:id', to: 'mc_questions#destroy'
+      patch 'mc_questions/:id', to: 'mc_questions#update'
     end
   end
 
