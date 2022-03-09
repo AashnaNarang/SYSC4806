@@ -8,11 +8,12 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 
 const questionType = {
     "MULTIPLE_CHOICE": "multipleChoice",
     "OPEN_ENDED": "openEnded",
-    "Numericale": "number",
+    "NUMERICAL": "numerical",
 }
 
 const CreatSurvey = () => {
@@ -93,16 +94,19 @@ const CreatSurvey = () => {
 
     }
     return(
-        <div className="createSurvey">
-            <Box
-                component="form"
-                sx={{
-                 '& .MuiTextField-root': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
+        <div className="createSurvey">          
+            <Paper
+            component="form"
+            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
             >
-                <div>
+                <Box
+                    component="form"
+                    sx={{
+                    '& .MuiTextField-root': { m: 1, width: '25ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
                     <Stack spacing={2} direction="row">
                         <TextField
                             required
@@ -121,9 +125,32 @@ const CreatSurvey = () => {
                             size="small"
                             onClick={handleCreateSurvey}
                         >Create Survey</Button>
-                    </Stack> 
-                </div>
-            </Box>
+                    </Stack>  
+                    <Stack spacing={2} direction="row">
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                            <InputLabel id="qType-label" color="secondary">Question Type</InputLabel>
+                            <Select 
+                                value={currentType}
+                                label="Question Type" 
+                                autoWidth                       
+                                color="secondary" 
+                                onChange={e => setCurrentType(e.target.value)}
+                            >
+                                <MenuItem value={questionType.OPEN_ENDED}>Open-Ended</MenuItem>                        
+                                <MenuItem value={questionType.MULTIPLE_CHOICE}>Multiple Choice</MenuItem>
+                                <MenuItem value={questionType.NUMERICAL}>Numerical</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Button
+                            label="Add Question" 
+                            variant="outlined" 
+                            color="secondary" 
+                            disabled={!currentType}
+                            size="small" 
+                            onClick={handleAddQuestion}>add</Button>
+                    </Stack>
+                </Box>
+            </Paper>
         </div>
     );
 }
