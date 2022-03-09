@@ -3,11 +3,11 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './Home'
 import CreatSurvey from './CreateSurvey'
 
-function App () {
+const App = () => {
     return(   
     <div>
         <Routes>
-            <Route path='/home' element={<Home />} />
+            <Route path='/' element={<Home />} />
             <Route path='/createSurvey' element={<CreatSurvey />} />
         </Routes>
     </div>
