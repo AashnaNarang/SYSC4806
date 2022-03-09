@@ -5,7 +5,6 @@ Rails.application.routes.draw do
       post 'surveys/create'
       delete 'surveys/:id', to: 'surveys#destroy'
       
-      get 'mc_questions/index'
       get 'mc_questions/:id', to: 'mc_questions#show'
       post 'mc_questions/create'
       delete 'mc_questions/:id', to: 'mc_questions#destroy'
