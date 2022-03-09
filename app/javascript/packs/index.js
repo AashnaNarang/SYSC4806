@@ -8,6 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     <BrowserRouter>
         <App />
     </BrowserRouter>,
-    document.body.appendChild(document.createElement('div')),
+    document.body.appendChild(document.createElement('root')),
   )
 })
