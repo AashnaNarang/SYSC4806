@@ -1,20 +1,17 @@
 import React from 'react';
-import {
-    Routes, 
-    Route, 
-    Link 
-} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import Home from './Home'
+import CreatSurvey from './CreateSurvey'
 
-const Home = () => <h1><Link to="/about">Click Me</Link></h1>
-const About = () => <h1>About Us</h1>
-
-const App = () => (
+const App = () => {
+    return(   
     <div>
         <Routes>
-            <Route exact path="/" component={Home} />
-            <Route path="/about" component={About} />
+            <Route path='/' element={<Home />} />
+            <Route path='/createSurvey' element={<CreatSurvey />} />
         </Routes>
     </div>
-)
+    )
+}
 
 export default App;
