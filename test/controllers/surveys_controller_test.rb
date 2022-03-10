@@ -3,7 +3,6 @@ require "test_helper"
 class SurveysControllerTest < ActionDispatch::IntegrationTest
   setup do
     @survey = surveys(:one)
-    @survey2 = surveys(:two)
   end
 
   test "should get index" do
@@ -18,18 +17,10 @@ class SurveysControllerTest < ActionDispatch::IntegrationTest
 
   test "should create survey" do
     assert_difference("Survey.count") do
-      post surveys_url, params: { survey: { isLive: @survey.isLive, title: @survey.title} }
+      post surveys_url, params: { survey: { isLive: @survey.isLive, title: @survey.title, wentLiveAt: @survey.wentLiveAt } }
     end
-    assert_redirected_to survey_url(Survey.last)
-    assert_nil(Survey.last.wentLiveAt, "Test not successful!")
-  end
 
-  test "should create survey with isLive is true" do
-    assert_difference("Survey.count") do
-      post surveys_url, params: { survey: { isLive: @survey2.isLive, title: @survey2.title} }
-    end
     assert_redirected_to survey_url(Survey.last)
-    assert_not_nil(Survey.last.wentLiveAt, "Test not successful!")
   end
 
   test "should show survey" do
@@ -43,15 +34,8 @@ class SurveysControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update survey" do
-    patch survey_url(@survey), params: { survey: { isLive: @survey.isLive, title: @survey.title} }
+    patch survey_url(@survey), params: { survey: { isLive: @survey.isLive, title: @survey.title, wentLiveAt: @survey.wentLiveAt } }
     assert_redirected_to survey_url(@survey)
-    assert_nil(Survey.last.wentLiveAt, "Test not successful!")
-  end
-
-  test "should update survey with isLive is true" do
-    patch survey_url(@survey2), params: { survey: { isLive: @survey2.isLive, title: @survey2.title} }
-    assert_redirected_to survey_url(@survey2)
-    assert_not_nil(Survey.last.wentLiveAt, "Test not successful!")
   end
 
   test "should destroy survey" do
