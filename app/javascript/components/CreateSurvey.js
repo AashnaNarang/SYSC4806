@@ -9,6 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const questionType = {
     "MULTIPLE_CHOICE": "multipleChoice",
@@ -21,7 +22,6 @@ const CreatSurvey = () => {
     const [surveyName, setSurveyName] = useState('');
     const [questions, setQuestions] = useState([]);
     const [currentType, setCurrentType] = useState('');
-    const [link, setLink] = useState('');
 
     useEffect(() => {
        setBaseUrl(window.location.href.replace(/\/#.*/, ""));
@@ -31,8 +31,26 @@ const CreatSurvey = () => {
         const survey = {
             name: surveyName,
             questions: questions,
-        }
-    }
+        };
+  
+        return fetch(`${baseUrl}/createSurvey`, {
+            method: 'POST',
+            body: JSON.stringify(survey),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if (data.message === "ok") {
+                setConsoleText(consoleText + "\nSurvey " + survey.name + " Created with ID: " + data.id);
+                setLink(`${baseUrl}/#/survey/${data.link}`)
+            } else {
+                setConsoleText(consoleText + "\nSurvey Creation Error: " + data.content);
+            }
+        })
+        .catch(console.log);
+      };
 
     const handleAddQuestion = () => {
         addQuestionAtIndex(questions.length)
@@ -48,6 +66,17 @@ const CreatSurvey = () => {
 
     const addQuestionAtIndex = (i) => {
         switch(currentType) {
+            case questionType.MULTIPLE_CHOICE:
+                setQuestions([
+                    ...questions.slice(0, i),
+                    {
+                        type: currentType,
+                        options: [],
+                        question: '',
+                    },
+                    ...questions.slice(i, questions.length)
+                ]);
+                break;               
             case questionType.OPEN_ENDED:
                 setQuestions([
                     ...questions.slice(0, i),
@@ -57,7 +86,7 @@ const CreatSurvey = () => {
                     },
                     ...questions.slice(i, questions.length)
                 ]);
-                break;
+                break;               
             case questionType.NUMERICAL:
                 setQuestions([
                     ...questions.slice(0, i),
@@ -70,29 +99,30 @@ const CreatSurvey = () => {
                     ...questions.slice(i, questions.length)
                 ]);
                 break;
-            case questionType.DROPDOWN:
-                setQuestions([
-                    ...questions.slice(0, i),
-                    {
-                        type: currentType,
-                        options: [],
-                        question: '',
-                    },
-                    ...questions.slice(i, questions.length)
-                ]);
-                break;
             default:
                 console.log(`[WARNING] Unknown question type "${currentType}"`);
         }
     }
 
     const deleteQuestion = (i) => {
-
+        setQuestions(questions.filter((q, current) => {
+            if (current === i) {
+                return false
+            }
+            return true
+        }))
     }
+
     // Update the array of current questions upon a change
-    const updateQuestion = (i, value) => {
-
+    const updateQuestion = (i, newValue) => {
+        setQuestions(questions.map((q, current) => {
+            if (current === i) {
+                return newValue
+            }
+            return true
+        }))
     }
+    
     return(
         <div className="createSurvey">          
             <Paper
@@ -149,9 +179,44 @@ const CreatSurvey = () => {
                             size="small" 
                             onClick={handleAddQuestion}>add</Button>
                     </Stack>
+
+                    {questions.map((q, i) => {
+                            switch(q.type) {
+                                case questionType.OPEN_ENDED:
+                                    return (
+                                        <Stack spacing={2} direction="row">
+                                        <TextField
+                                            value={questions[i].question}
+                                            variant="outlined"
+                                            label="Title"
+                                            size="small"
+                                            color="secondary"
+                                            onChange={e => updateQuestion(i, {...q,question: e.target.value})}
+                                        />
+                                        <Button 
+                                            variant="outlined"
+                                            color="secondary"
+                                            size="small"
+                                            onClick={e => addQuestionAtIndex(i)}
+                                            >Add
+                                        </Button>
+                                        <Button 
+                                            variant="outlined"
+                                            color="secondary"
+                                            onClick={e => deleteQuestion(i)}
+                                            size="small"
+                                        >
+                                        <DeleteIcon/></Button>
+                                    </Stack>
+                                    )
+                            }
+                        })
+                    }
+                            
                 </Box>
             </Paper>
         </div>
-    );
+    )
 }
+
 export default CreatSurvey
