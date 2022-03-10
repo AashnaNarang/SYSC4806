@@ -10,9 +10,9 @@ const lightTheme = createTheme({ palette: { mode: 'light' } });
 
 const Home = () => {
     return(
-        <Card className="sl-app sl-app_home t">
+        <Card>
             <ThemeProvider theme={darkTheme}>
-                <Typography className ="t" variant="h4" component="h3">
+                <Typography variant="h4" component="h3">
                     Hey surveyors, Welcome to SurveyLab!
                 </Typography> 
                 <Paper variant="outlined" />
