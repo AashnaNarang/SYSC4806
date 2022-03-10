@@ -4,7 +4,7 @@ RSpec.describe "McQuestions", type: :request do
 
   describe "positive tests" do 
 
-    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: Time.now)}
+    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
     let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
 
     describe "POST /api/v1/mc_questions/create" do
@@ -52,7 +52,7 @@ RSpec.describe "McQuestions", type: :request do
   end
 
   describe "negative tests" do
-    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: Time.now)}
+    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
     let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
 
     describe "POST /api/v1/mc_questions/create with incorrect params" do
@@ -98,7 +98,7 @@ RSpec.describe "McQuestions", type: :request do
 
     describe "PATCH /api/v1/mc_questions/create with live survey" do
 
-      let!(:survey_live) {Survey.create(title: "test", id: 2, isLive: true, wentLiveAt: Time.now)}
+      let!(:survey_live) {Survey.create(title: "test", id: 2, isLive: true, wentLiveAt: DateTime.now)}
       let!(:mc_question_test_2) {McQuestion.create(question: "test question", survey_id: survey_live.id, id: 2)}
 
       it 'fails due to live survey' do
