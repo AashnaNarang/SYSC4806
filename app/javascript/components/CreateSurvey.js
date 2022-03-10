@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import DeleteIcon from '@mui/icons-material/Delete';
+import McQuestion from './McQuestion'
 
 const questionType = {
     "MULTIPLE_CHOICE": "multipleChoice",
@@ -208,6 +209,11 @@ const CreatSurvey = () => {
                                         >
                                         <DeleteIcon/></Button>
                                     </Stack>
+                                    )
+                                case questionType.MULTIPLE_CHOICE:
+                                    return(
+                                        //Need to be replaced with survey id
+                                        <McQuestion survey_id={1}/>
                                     )
                             }
                         })
