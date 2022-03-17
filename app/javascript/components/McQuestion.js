@@ -7,12 +7,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 class McQuestion extends React.Component {
   constructor(props) {
       super(props);
-      this.state = {question: '', options: [], survey_id: props.survey_id};
+      this.state = {question: '', options: [], survey_id: props.survey_id, position: props.position};
     }
 
   handleCreateMcQuestion(){
     //Hardcoded the value for now, Base url causing a weird URL
-		fetch('http://localhost:3000/api/v1/mc_questions/create', {
+    var base_url = window.location.origin
+		fetch(`${base_url}/api/v1/mc_questions/create`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
