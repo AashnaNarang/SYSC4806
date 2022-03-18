@@ -34,3 +34,8 @@ Python version = 2.7.18
 
 ### Sprint 2 - February 25 - March 8th
 - **Plan**: The team plans to finish setting up CircleCI, Heroku, and finish majority of the Create Survey feature [https://github.com/AashnaNarang/SYSC4806/issues/12]. 
+- **Accomplished**: Finished majority of the Create Survey feature, setup Heroku and CircleCI
+
+### Sprint 3 - March 8th - March 25th
+- **Plan**: The team plans to finish the Create Survey feature, make it so CircleCI runs our unit tests, and finish the Use Survey feature 
+
