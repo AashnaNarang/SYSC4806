@@ -21,20 +21,20 @@ const questionType = {
 const CreatSurvey = () => {
     const [baseUrl, setBaseUrl] = useState('');
     const [surveyName, setSurveyName] = useState('');
+    const [surveyId, setSurveyId] = useState(-1);
     const [questions, setQuestions] = useState([]);
     const [currentType, setCurrentType] = useState('');
 
     useEffect(() => {
-       setBaseUrl(window.location.href.replace(/\/#.*/, ""));
-    }, [])
-
-    const handleCreateSurvey = () => {
-        const survey = {
-            name: surveyName,
-            questions: questions,
+       setBaseUrl(window.location.origin.replace(/\/#.*/, ""));
+       const survey = {
+            survey: {
+                title: "New Survey",
+                isLive: false,
+            }
         };
-  
-        return fetch(`${baseUrl}/createSurvey`, {
+
+        fetch(`${baseUrl}/api/v1/surveys/create`, {
             method: 'POST',
             body: JSON.stringify(survey),
             headers: {
@@ -43,15 +43,42 @@ const CreatSurvey = () => {
         })
         .then(checkRequest)
         .then(data => {
-            if (data.message === "ok") {
-                setConsoleText(consoleText + "\nSurvey " + survey.name + " Created with ID: " + data.id);
-                setLink(`${baseUrl}/#/survey/${data.link}`)
-            } else {
-                setConsoleText(consoleText + "\nSurvey Creation Error: " + data.content);
-            }
+            handleSurveyAPIResponse(data, "Created")
         })
         .catch(console.log);
-      };
+    }, []);
+
+    const handleCreateSurvey = () => {
+        const survey = {
+            survey: {
+                title: surveyName,
+                isLive: true,
+            }
+        };
+        fetch(`${baseUrl}/api/v1/surveys/${surveyId}`, {
+            method: 'PATCH',
+            body: JSON.stringify(survey),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            handleSurveyAPIResponse(data, "Submitted")
+        })
+        .catch(console.log);
+    };
+    
+    const handleSurveyAPIResponse = (data, messageType) => {
+        console.log(data);
+        if (!data.error && !data.notice) {
+            setSurveyName(data.title);
+            setSurveyId(data.id);
+            console.log("\nSurvey " + data.title + " " + messageType + " with ID: " + data.id);
+        } else {
+            console.log("\n Error: " + (data.error || data.notice));
+        }
+    }
 
     const handleAddQuestion = () => {
         addQuestionAtIndex(questions.length)
