@@ -9,6 +9,7 @@ import {
     Box,
     Stack,
     Paper } from '@mui/material'
+import Modal from './Modal';
 
 import TextQuestion from './questionTypes/TextQuestion';
 import MultipleChoice from './questionTypes/MultipleChoice';
@@ -25,6 +26,26 @@ export default function CreateSurvey() {
     const [surveyId, setSurveyId] = useState(-1);
     const [questions, setQuestions] = useState([]);
     const [currentType, setCurrentType] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openFailure, setOpenFailure] = useState(false);
+    const [error, setError] = useState('');
+    const [surveyLink, setSurveyLink] = useState('');
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleOpenFailure = () => {
+        setOpenFailure(true);
+    }
+
+    const handleCloseFailure = () => {
+        setOpenFailure(false);
+    }
 
     useEffect(() => {
        setBaseUrl(window.location.origin.replace(/\/#.*/, ""));
@@ -76,7 +97,7 @@ export default function CreateSurvey() {
         })
         .then(checkRequest)
         .then(data => {
-            handleSurveyAPIResponse(data, "Submitted")
+            handleSurveyAPIResponse(data, "Submitted");
         })
         .catch(console.log);
     };
@@ -142,9 +163,15 @@ export default function CreateSurvey() {
         if (!data.error && !data.notice) {
             setSurveyName(data.title);
             setSurveyId(data.id);
+            setSurveyLink(`${baseUrl}/survey/${data.id}`);
+            if (messageType === "Submitted") {
+                handleOpen();
+            }
             console.log("\nSurvey " + data.title + " " + messageType + " with ID: " + data.id);
         } else {
             console.log("\n Error: " + (data.error || data.notice));
+            setError(data.error || data.notice);
+            handleOpenFailure();
         }
     }
 
@@ -253,6 +280,8 @@ export default function CreateSurvey() {
                             
                 </Box>
             </Paper>
+            <Modal open={open} handleClose={handleClose} title={"Success"} message={`Share this link to share the survey: ${surveyLink}`}/>
+            <Modal open={openFailure} handleClose={handleCloseFailure} title={"Failure"} message={`Error: ${error}`}/>
         </div>
     )
 }
