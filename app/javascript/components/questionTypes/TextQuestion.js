@@ -16,7 +16,7 @@ export default function TextQuestion({q, i, deleteQuestion, update}) {
                 value={q.question}
             />
             <Button 
-                variant="outlined"
+                variant="text"
                 color="secondary"
                 onClick={e => deleteQuestion(i)}
                 size="small"

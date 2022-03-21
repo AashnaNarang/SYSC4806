@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
+import {
+    Button,
+    TextField,
+    FormControl,
+    Select,
+    MenuItem,
+    InputLabel,
+    Box,
+    Stack,
+    Paper
+    }
+    from '@mui/material'
+    
 import TextQuestion from './questionTypes/TextQuestion';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -29,8 +33,7 @@ export default function CreateSurvey() {
        const survey = {
             survey: {
                 title: "New Survey",
-                isLive: false,
-                wentLiveAt: null
+                isLive: false
             }
         };
 
@@ -101,14 +104,6 @@ export default function CreateSurvey() {
         setQuestions([...questions, question])
     }
 
-    const checkRequest = (res) => {
-        if (res.status === 200) {
-            return res.json();
-        } else {
-            throw res;
-        }
-    }
-
     const deleteQuestion = (i) => {
         questions.splice(i, 1)
         setQuestions([...questions])
@@ -119,6 +114,15 @@ export default function CreateSurvey() {
         questions.splice(i, 1, newValue)
         setQuestions([...questions])
     }
+    
+    const checkRequest = (res) => {
+        if (res.status === 200) {
+            return res.json();
+        } else {
+            throw res;
+        }
+    }
+
     
     return(
         <div className="createSurvey">          
@@ -136,21 +140,21 @@ export default function CreateSurvey() {
                             id="survey-name"
                             label="Survey Name"
                             margin="dense"                          
-                            variant="standard"
+                            variant="outlined"
                             size="small"
                             color="secondary" 
                             focused
                             onChange={e => setSurveyName(e.target.value)}
                         />
                         <Button
-                            variant="outlined"                              
+                            variant="text"                              
                             color="secondary"
                             size="small"
                             onClick={handleCreateSurvey}
                         >Create Survey</Button>
                     </Stack>  
                     <Stack spacing={2} direction="row">
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                        <FormControl variant="outlined" sx={{ m: 1, minWidth: 120 }}>
                             <InputLabel id="qType-label" color="secondary">Question Type</InputLabel>
                             <Select 
                                 value={currentType}
@@ -165,8 +169,7 @@ export default function CreateSurvey() {
                             </Select>
                         </FormControl>
                         <Button
-                            label="Add Question" 
-                            variant="outlined" 
+                            variant="text" 
                             color="secondary" 
                             disabled={!currentType}
                             size="small" 
