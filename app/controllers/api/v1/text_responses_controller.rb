@@ -1,5 +1,5 @@
 class Api::V1::TextResponsesController < ApplicationController
-  before_action :set_question, only: [:show, :edit, :update, :destroy]
+  # before_action :set_question, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
 
    # POST /text_questions or /text_questions.json
@@ -32,30 +32,17 @@ class Api::V1::TextResponsesController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_response
-      begin
-        @text_response = TextResponse.find(params[:id])
-      rescue ActiveRecord::ActiveRecordError => error
-        render json: {error: error.message}
-      end
-    end
+    # def set_response
+    #   begin
+    #     @text_response = TextResponse.find(params[:id])
+    #   rescue ActiveRecord::ActiveRecordError => error
+    #     render json: {error: error.message}
+    #   end
+    # end
 
     def find_survey(survey_id)
         @survey = Survey.find(survey_id)
     end
-
-    # # Only allow a list of trusted parameters through.
-    # def question_params_update
-    #   params.require(:text_question).permit(:question, :survey_id)
-    # end
-
-    # # Only allow a list of trusted parameters through for the create method
-    # def question_params_create
-    #   params.require(:text_question).permit(:question, :survey_id).tap do |question_params|
-    #     question_params.require(:question)
-    #     question_params.require(:survey_id)
-    #   end
-    # end
 
     def find_question(text_question_id)
         @text_question = TextQuestion.find(text_question_id)
