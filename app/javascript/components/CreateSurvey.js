@@ -8,12 +8,10 @@ import {
     InputLabel,
     Box,
     Stack,
-    Paper
-    }
-    from '@mui/material'
-    
+    Paper } from '@mui/material'
+
 import TextQuestion from './questionTypes/TextQuestion';
-import { v4 as uuidv4 } from 'uuid';
+import MultipleChoice from './questionTypes/MultipleChoice';
 
 const questionType = {
     "MULTIPLE_CHOICE": "multipleChoice",
@@ -127,7 +125,7 @@ export default function CreateSurvey() {
     return(
         <div className="createSurvey">          
             <Paper
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 600 }}
             >
                 <Box
                     sx={{
@@ -181,11 +179,7 @@ export default function CreateSurvey() {
                                 case questionType.OPEN_ENDED:
                                    return (<TextQuestion key={i} i={i} q={q} deleteQuestion={deleteQuestion} update={updateQuestion}></TextQuestion>)
                                 case questionType.MULTIPLE_CHOICE:
-                                    return (
-                                        //Need to be replaced with survey id
-                                        //<McQuestion survey_id={1}/>
-                                        <></>
-                                    )
+                                    return (<MultipleChoice key={i} i={i} q={q} deleteQuestion={deleteQuestion} update={updateQuestion}></MultipleChoice>)
                             }
                         })
                     }
