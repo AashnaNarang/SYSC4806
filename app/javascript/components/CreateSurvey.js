@@ -163,7 +163,7 @@ export default function CreateSurvey() {
                             >
                                 <MenuItem value={questionType.OPEN_ENDED}>Open-Ended</MenuItem>                        
                                 <MenuItem value={questionType.MULTIPLE_CHOICE}>Multiple Choice</MenuItem>
-                                <MenuItem value={questionType.NUMERICAL}>Numerical</MenuItem>
+                                {/* <MenuItem value={questionType.NUMERICAL}>Numerical</MenuItem> */}
                             </Select>
                         </FormControl>
                         <Button
