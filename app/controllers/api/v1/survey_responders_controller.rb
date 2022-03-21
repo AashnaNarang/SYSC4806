@@ -33,6 +33,14 @@ class Api::V1::SurveyRespondersController < ApplicationController
 
   # PATCH/PUT /surveys/1 or /surveys/1.json
   def update
+
+    begin
+      find_survey(survey_responder_params_update[:survey_id])
+    rescue ActiveRecord::ActiveRecordError => error
+      render json: {error: error.message}
+      return
+    end
+
     if @survey.isLive
       begin
         params = survey_responder_params_update
@@ -59,7 +67,8 @@ class Api::V1::SurveyRespondersController < ApplicationController
 
     # Only allow a list of trusted parameters through for the update method
     def survey_responder_params_update
-      params.require(:survey_responder).permit(:respondedAt)
+      params.require(:survey_responder).permit(:respondedAt, :survey_id) do |question_params|
+      question_params.require(:survey_id)
     end
 
     # Only allow a list of trusted parameters through for the create method
