@@ -7,7 +7,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 class McQuestion extends React.Component {
   constructor(props) {
       super(props);
-      this.state = {question: '', options: [], survey_id: props.survey_id, position: props.position};
+      this.state = {
+        question: '', 
+        options: [], 
+        survey_id: 
+        props.survey_id, 
+        position: props.position};
     }
 
   handleCreateMcQuestion(){
