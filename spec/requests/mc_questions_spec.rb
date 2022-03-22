@@ -65,6 +65,28 @@ RSpec.describe "McQuestions", type: :request do
       end
     end
 
+    describe "POST /api/v1/mc_questions/create with live survey" do
+      let!(:survey_live) {Survey.create(title: "test", id: 2, isLive: true, wentLiveAt: DateTime.now)}
+
+      it 'fails due survey id is a live survey' do
+        post '/api/v1/mc_questions/create', params: {mc_question: {question: "test_question", 
+        survey_id: survey_live.id}, mc_options: {options: ["op1", "op2"]}}
+
+        expect(JSON.parse(response.body)["notice"]).to eql('Failure! Cannot update live survey')
+      end
+    end
+
+    describe "POST /api/v1/mc_questions/create with non-existant survey" do
+
+      it 'fails due survey id being invalid' do
+
+        post '/api/v1/mc_questions/create', params: {mc_question: {question: "test_question", 
+        survey_id: 34234}, mc_options: {options: ["op1", "op2"]}}
+
+        expect(JSON.parse(response.body)["error"]).to eql("Couldn't find Survey with 'id'=34234")
+      end
+    end
+
     describe "DELETE /api/v1/mc_questions/:id with non existant id" do 
 
       it 'returns an error' do
