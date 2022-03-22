@@ -10,7 +10,14 @@ class Api::V1::SurveysController < ApplicationController
 
   # GET /surveys/1 or /surveys/1.json
   def show
-    render json: @survey
+
+    if @survey.mc_questions.any? or @survey.text_questions.any?
+      questions = @survey.mc_questions + @survey.text_questions
+      sorted_questions = questions.sort_by(&:order)
+      render json: {survey: @survey.as_json, questions: convert_question_to_json(sorted_questions).as_json}
+    else
+      render json: {survey: @survey.as_json}
+    end
   end
 
   # GET /surveys/new
@@ -92,5 +99,24 @@ class Api::V1::SurveysController < ApplicationController
         survey_params.require(:title)
         survey_params.require(:isLive)
       end
+    end
+
+    # Converts a list of questions to json format
+    def convert_question_to_json(questions)
+      json_msg = []
+
+      questions.each do |question|
+        if question.is_a?(McQuestion)
+          json_question = question.as_json(include: :mc_options)
+          json_question[:question_type] = "mc"
+          json_msg.append(json_question)
+        elsif question.is_a?(TextQuestion)
+          json_question = question.as_json
+          json_question[:question_type] = "text"
+          json_msg.append(json_question)
+        end
+      end
+      
+      return json_msg
     end
 end

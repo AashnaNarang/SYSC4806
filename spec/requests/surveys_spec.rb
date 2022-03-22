@@ -59,8 +59,27 @@ RSpec.describe "Surveys", type: :request do
 
         get '/api/v1/surveys/1'
 
-        expect(JSON.parse(response.body)["title"]).to eql('test')
-        expect(JSON.parse(response.body)["id"]).to eql(survey.id)
+        expect(JSON.parse(response.body)["survey"]["title"]).to eql('test')
+        expect(JSON.parse(response.body)["survey"]["id"]).to eql(survey.id)
+      end
+
+    end
+
+    describe "GET /api/v1/surveys/:id with questions" do 
+
+      let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 2)}
+      let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 1)}
+
+      it 'returns the specified surveys if successful' do
+
+        survey.mc_questions << mc_question_test
+        survey.text_questions << text_question_test
+
+        get '/api/v1/surveys/1'
+        expect(JSON.parse(response.body)["survey"]["title"]).to eql('test')
+        expect(JSON.parse(response.body)["survey"]["id"]).to eql(survey.id)
+        expect(JSON.parse(response.body)["questions"][0]["question_type"]).to eql('text')
+        expect(JSON.parse(response.body)["questions"][1]["question_type"]).to eql('mc')
       end
 
     end
