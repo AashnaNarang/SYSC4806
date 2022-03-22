@@ -17,15 +17,28 @@ class Api::V1::McQuestionsController < ApplicationController
           return
         end
 
-        options[:options].each do |option|
-          @mc_question.mc_options << McOption.new(option: option)
+        begin
+          find_survey(mc_question_params[:survey_id])
+        rescue ActiveRecord::ActiveRecordError => error
+          render json: {error: error.message}
+          return
+        end
+  
+        # Add question if survey is not live
+        if !@survey.isLive
+          options[:options].each do |option|
+            @mc_question.mc_options << McOption.new(option: option)
+          end
+
+          if @mc_question.save
+            render json: @mc_question
+          else
+            render json: {notice: "Failure! Could not save McQuestion due to #{@mc_question.errors.full_messages}"}
+          end 
+        else
+          render json: {notice: 'Failure! Cannot update live survey'}
         end
 
-        if @mc_question.save
-          render json: @mc_question
-        else
-          render json: {notice: "Failure! Could not save McQuestion due to #{@mc_question.errors.full_messages}"}
-        end
     end
   
     # PATCH/PUT /mc_questions/1 or /mc_questions/1.json
@@ -81,4 +94,8 @@ class Api::V1::McQuestionsController < ApplicationController
       def mc_option_params
         params.require(:mc_options).permit(:options => [])
       end
+
+      def find_survey(survey_id)
+        @survey = Survey.find(survey_id)
+    end
   end

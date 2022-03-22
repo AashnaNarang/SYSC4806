@@ -49,13 +49,24 @@ export default function CreateSurvey() {
         .catch(console.log);
     }, []);
 
-    const handleCreateSurvey = () => {
+    const handleCreateSurvey = async () => {
         const survey = {
             survey: {
                 title: surveyName,
                 isLive: true,
             }
         };
+        for(let i = 0; i < questions.length; i++) {
+            let question = questions[i];
+            if (question.type === questionType["OPEN_ENDED"]) {
+                await createTextQuestion(question);
+            } else if (question.type === questionType["MULTIPLE_CHOICE"]) {
+                await createMCQuestion(question);
+            } else {
+                console.log("Error: Invalid question type submitted");
+            }
+        }
+
         fetch(`${baseUrl}/api/v1/surveys/${surveyId}`, {
             method: 'PATCH',
             body: JSON.stringify(survey),
@@ -69,9 +80,65 @@ export default function CreateSurvey() {
         })
         .catch(console.log);
     };
+
+    const createTextQuestion = async (question) => {
+        const text_question = {
+            text_question: {
+                question: question.question, 
+                // order: i,
+                survey_id: surveyId
+            }
+        }
+
+        await fetch(`${baseUrl}/api/v1/text_questions/create`, {
+            method: 'POST',
+            body: JSON.stringify(text_question),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if  (data.error || data.notice) {
+                console.log("Failed to add question: " + (data.error||data.notice))
+            } else {
+                console.log("Question added: " + data.question);
+            }
+        })
+        .catch(console.log);
+    }
+
+    const createMCQuestion = async (question) => {
+        const mc_question = {
+            mc_question: {
+                question: question.question, 
+                // order: i,
+                survey_id: surveyId
+            }, 
+            mc_options: {
+                options: question.options
+            }
+        }
+
+        await fetch(`${baseUrl}/api/v1/mc_questions/create`, {
+            method: 'POST',
+            body: JSON.stringify(mc_question),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if  (data.error || data.notice) {
+                console.log("Failed to add question: " + (data.error||data.notice))
+            } else {
+                console.log("Question added: " + data.question);
+            }
+        })
+        .catch(console.log);
+    }
     
     const handleSurveyAPIResponse = (data, messageType) => {
-        console.log(data);
         if (!data.error && !data.notice) {
             setSurveyName(data.title);
             setSurveyId(data.id);
