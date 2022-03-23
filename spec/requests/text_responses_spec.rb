@@ -5,9 +5,9 @@ RSpec.describe "TextResponses", type: :request do
   describe "positive tests" do 
 
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
-    # let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: false, wentLiveAt: nil)}
     let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
     # write in a line here that makes the survey live so that we can add in a survey responder and text response
+    # let!(:survey) {Survey.update(isLive: true)}
     let!(:surveyResponder) {SurveyResponder.create(survey_id: survey.id)}
 
     describe "POST /api/v1/text_responses/create" do
@@ -34,6 +34,7 @@ RSpec.describe "TextResponses", type: :request do
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
     let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
     # write in a line here that makes the survey live so that we can add in a survey responder and text response
+    # let!(:survey) {Survey.update(isLive: true)}
     let!(:surveyResponder) {SurveyResponder.create(survey_id: survey.id)}
 
     describe "POST /api/v1/text_responses/create with incorrect params" do

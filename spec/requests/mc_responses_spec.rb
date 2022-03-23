@@ -6,8 +6,8 @@ RSpec.describe "McResponses", type: :request do
 
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
     let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1), mc_options: {options: ["op1", "op2"]}}
-    # let!(:survey) {Survey.update(isLive: true)}
     # write in a line here that makes the survey live so that we can add in a survey responder and text response
+    # let!(:survey) {Survey.update(isLive: true)}
     let!(:surveyResponder) {SurveyResponder.create(survey_id: survey.id)}
 
     #------------------------------- YOU STOPPED HERE CONTINUE FINISHING POSITIVE AND NEGATIVE TESTS FOR THIS-------------------------------------
@@ -34,6 +34,9 @@ RSpec.describe "McResponses", type: :request do
   describe "negative tests" do
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
     let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1), mc_options: {options: ["op1", "op2"]}}
+    # write in a line here that makes the survey live so that we can add in a survey responder and text response
+    # let!(:survey) {Survey.update(isLive: true)}
+    let!(:surveyResponder) {SurveyResponder.create(survey_id: survey.id)}
 
     describe "POST /api/v1/mc_responses/create with incorrect params" do
 
