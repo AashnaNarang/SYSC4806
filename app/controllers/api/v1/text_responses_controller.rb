@@ -1,5 +1,4 @@
 class Api::V1::TextResponsesController < ApplicationController
-  # before_action :set_question, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
 
    # POST /text_questions or /text_questions.json
@@ -31,14 +30,6 @@ class Api::V1::TextResponsesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    # def set_response
-    #   begin
-    #     @text_response = TextResponse.find(params[:id])
-    #   rescue ActiveRecord::ActiveRecordError => error
-    #     render json: {error: error.message}
-    #   end
-    # end
 
     def find_survey(survey_id)
         @survey = Survey.find(survey_id)

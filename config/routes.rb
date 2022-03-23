@@ -19,6 +19,8 @@ Rails.application.routes.draw do
 
       post 'text_responses/create'
 
+      post 'mc_responses/create'
+
       post 'survey_responders/create'
       patch 'survey_responders/:id', to: 'survey_responders#update'
     end
