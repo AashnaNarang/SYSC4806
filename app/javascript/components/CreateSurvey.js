@@ -9,6 +9,7 @@ import {
     Box,
     Stack,
     Paper } from '@mui/material'
+import Modal from './Modal';
 
 import TextQuestion from './questionTypes/TextQuestion';
 import MultipleChoice from './questionTypes/MultipleChoice';
@@ -25,6 +26,26 @@ export default function CreateSurvey() {
     const [surveyId, setSurveyId] = useState(-1);
     const [questions, setQuestions] = useState([]);
     const [currentType, setCurrentType] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openFailure, setOpenFailure] = useState(false);
+    const [error, setError] = useState('');
+    const [surveyLink, setSurveyLink] = useState('');
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleOpenFailure = () => {
+        setOpenFailure(true);
+    }
+
+    const handleCloseFailure = () => {
+        setOpenFailure(false);
+    }
 
     useEffect(() => {
        setBaseUrl(window.location.origin.replace(/\/#.*/, ""));
@@ -49,13 +70,24 @@ export default function CreateSurvey() {
         .catch(console.log);
     }, []);
 
-    const handleCreateSurvey = () => {
+    const handleCreateSurvey = async () => {
         const survey = {
             survey: {
                 title: surveyName,
                 isLive: true,
             }
         };
+        for(let i = 0; i < questions.length; i++) {
+            let question = questions[i];
+            if (question.type === questionType["OPEN_ENDED"]) {
+                await createTextQuestion(question);
+            } else if (question.type === questionType["MULTIPLE_CHOICE"]) {
+                await createMCQuestion(question);
+            } else {
+                console.log("Error: Invalid question type submitted");
+            }
+        }
+
         fetch(`${baseUrl}/api/v1/surveys/${surveyId}`, {
             method: 'PATCH',
             body: JSON.stringify(survey),
@@ -65,19 +97,81 @@ export default function CreateSurvey() {
         })
         .then(checkRequest)
         .then(data => {
-            handleSurveyAPIResponse(data, "Submitted")
+            handleSurveyAPIResponse(data, "Submitted");
         })
         .catch(console.log);
     };
+
+    const createTextQuestion = async (question) => {
+        const text_question = {
+            text_question: {
+                question: question.question, 
+                // order: i,
+                survey_id: surveyId
+            }
+        }
+
+        await fetch(`${baseUrl}/api/v1/text_questions/create`, {
+            method: 'POST',
+            body: JSON.stringify(text_question),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if  (data.error || data.notice) {
+                console.log("Failed to add question: " + (data.error||data.notice))
+            } else {
+                console.log("Question added: " + data.question);
+            }
+        })
+        .catch(console.log);
+    }
+
+    const createMCQuestion = async (question) => {
+        const mc_question = {
+            mc_question: {
+                question: question.question, 
+                // order: i,
+                survey_id: surveyId
+            }, 
+            mc_options: {
+                options: question.options
+            }
+        }
+
+        await fetch(`${baseUrl}/api/v1/mc_questions/create`, {
+            method: 'POST',
+            body: JSON.stringify(mc_question),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if  (data.error || data.notice) {
+                console.log("Failed to add question: " + (data.error||data.notice))
+            } else {
+                console.log("Question added: " + data.question);
+            }
+        })
+        .catch(console.log);
+    }
     
     const handleSurveyAPIResponse = (data, messageType) => {
-        console.log(data);
         if (!data.error && !data.notice) {
             setSurveyName(data.title);
             setSurveyId(data.id);
+            setSurveyLink(`${baseUrl}/survey/${data.id}`);
+            if (messageType === "Submitted") {
+                handleOpen();
+            }
             console.log("\nSurvey " + data.title + " " + messageType + " with ID: " + data.id);
         } else {
             console.log("\n Error: " + (data.error || data.notice));
+            setError(data.error || data.notice);
+            handleOpenFailure();
         }
     }
 
@@ -186,6 +280,8 @@ export default function CreateSurvey() {
                             
                 </Box>
             </Paper>
+            <Modal open={open} handleClose={handleClose} title={"Success"} message={`Share this link to share the survey: ${surveyLink}`}/>
+            <Modal open={openFailure} handleClose={handleCloseFailure} title={"Failure"} message={`Error: ${error}`}/>
         </div>
     )
 }
