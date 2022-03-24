@@ -19,7 +19,7 @@ class Api::V1::TextResponsesController < ApplicationController
         if @text_response.save
           render json: @text_response
         else
-          render json: {notice: "Failure! Could not save Text Response due to #{@text_response.errors.full_messages}"}
+          render json: {notice: "Failure! Could not save Text Response due to #{@text_response.errors}"}
         end
       else
         render json: {notice: 'Failure! Cannot update when survey not live'}

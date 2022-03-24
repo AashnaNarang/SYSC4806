@@ -5,20 +5,21 @@ RSpec.describe "SurveyResponders", type: :request do
   describe "positive tests" do 
 
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: true, wentLiveAt: nil)}
-    let!(:survey_responder) {SurveyResponder.create(id: 1, respondedAt: nil, survey_id: survey.survey_id)}
+    let!(:survey_responder) {SurveyResponder.create(id: 1, respondedAt: nil, survey_id: survey.id)}
 
     describe "POST /api/v1/survey_responders/create" do
 
       context "isLive is false" do
         it 'returns the survey if successful' do
 
-          expect { post '/api/v1/survey_responders/create', params: {
-            survey_responder: {
-                survey_id:survey.survey_id
-            }
+          post '/api/v1/survey_responders/create', params: {
+              survey_responder: {
+                survey_id:survey.id
+              }
           }
+          
 
-          expect(JSON.parse(response.body)["survey_id"]).to eql(survey.survey_id)
+          expect(JSON.parse(response.body)["survey_id"]).to eql(survey.id)
         end
       end
     end
@@ -42,9 +43,10 @@ RSpec.describe "SurveyResponders", type: :request do
 
   describe "negative tests" do
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: true, wentLiveAt: nil)}
-    let!(:survey_responder) {SurveyResponder.create(id: 1, respondedAt: nil, survey_id: survey.survey_id)}
+    let!(:survey_responder) {SurveyResponder.create(id: 1, respondedAt: nil, survey_id: survey.id)}
 
     describe "POST /api/v1/survey_responders/create with incorrect params" do
+      
       context "survey_responder param is empty" do
         it 'fails due to missing param' do
 
@@ -54,25 +56,25 @@ RSpec.describe "SurveyResponders", type: :request do
         end
       end
 
-      context "title param is missing" do
-        it 'fails due to missing title' do
+      context "survey_id param is missing" do
+        it 'fails due to missing survey_id' do
 
-          post '/api/v1/survey_responders/create', params: params: {survey_responder: {}}
+          post '/api/v1/survey_responders/create', params: {survey_responder: {}}
 
           expect(JSON.parse(response.body)["error"]).to eql('param is missing or the value is empty: survey_id')
         end
       end
     end
 
-    describe "PATCH /api/v1/survey_responders/create with incorrect params" do
+    describe "PATCH /api/v1/survey_responders/:id with incorrect params" do
+      context "survey_responder param is empty" do
+        it 'fails due to missing param' do
 
-      it 'fails due to missing param' do
-
-        patch '/api/v1/survey_responders/1', params: {}
-        
-        expect(JSON.parse(response.body)["error"]).to eql('param is missing or the value is empty: survey')
+          patch '/api/v1/survey_responders/1', params: {}
+          
+          expect(JSON.parse(response.body)["error"]).to eql('param is missing or the value is empty: survey_responder')
+        end
       end
     end
-
   end
 end

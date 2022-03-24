@@ -19,7 +19,7 @@ class Api::V1::McResponsesController < ApplicationController
           if @mc_response.save
             render json: @mc_response
           else
-            render json: {notice: "Failure! Could not save Text Response due to #{@mc_response.errors.full_messages}"}
+            render json: {notice: "Failure! Could not save MC Response due to #{@mc_response.errors.full_messages}"}
           end
         else
           render json: {notice: 'Failure! Cannot update when survey not live'}
