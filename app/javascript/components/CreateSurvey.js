@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+    Button,
+    TextField,
+    FormControl,
+    Select,
+    MenuItem,
+    InputLabel,
+    Box,
+    Stack,
+    Paper } from '@mui/material'
+import Modal from './Modal';
+
+import TextQuestion from './questionTypes/TextQuestion';
+import MultipleChoice from './questionTypes/MultipleChoice';
 
 const questionType = {
     "MULTIPLE_CHOICE": "multipleChoice",
@@ -17,19 +20,39 @@ const questionType = {
     "NUMERICAL": "numerical",
 }
 
-const CreatSurvey = () => {
+export default function CreateSurvey() {
     const [baseUrl, setBaseUrl] = useState('');
     const [surveyName, setSurveyName] = useState('');
     const [surveyId, setSurveyId] = useState(-1);
     const [questions, setQuestions] = useState([]);
     const [currentType, setCurrentType] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openFailure, setOpenFailure] = useState(false);
+    const [error, setError] = useState('');
+    const [surveyLink, setSurveyLink] = useState('');
+
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleOpenFailure = () => {
+        setOpenFailure(true);
+    }
+
+    const handleCloseFailure = () => {
+        setOpenFailure(false);
+    }
 
     useEffect(() => {
        setBaseUrl(window.location.origin.replace(/\/#.*/, ""));
        const survey = {
             survey: {
                 title: "New Survey",
-                isLive: false,
+                isLive: false
             }
         };
 
@@ -47,13 +70,24 @@ const CreatSurvey = () => {
         .catch(console.log);
     }, []);
 
-    const handleCreateSurvey = () => {
+    const handleCreateSurvey = async () => {
         const survey = {
             survey: {
                 title: surveyName,
                 isLive: true,
             }
         };
+        for(let i = 0; i < questions.length; i++) {
+            let question = questions[i];
+            if (question.type === questionType["OPEN_ENDED"]) {
+                await createTextQuestion(question);
+            } else if (question.type === questionType["MULTIPLE_CHOICE"]) {
+                await createMCQuestion(question);
+            } else {
+                console.log("Error: Invalid question type submitted");
+            }
+        }
+
         fetch(`${baseUrl}/api/v1/surveys/${surveyId}`, {
             method: 'PATCH',
             body: JSON.stringify(survey),
@@ -63,26 +97,116 @@ const CreatSurvey = () => {
         })
         .then(checkRequest)
         .then(data => {
-            handleSurveyAPIResponse(data, "Submitted")
+            handleSurveyAPIResponse(data, "Submitted");
         })
         .catch(console.log);
     };
+
+    const createTextQuestion = async (question) => {
+        const text_question = {
+            text_question: {
+                question: question.question, 
+                // order: i,
+                survey_id: surveyId
+            }
+        }
+
+        await fetch(`${baseUrl}/api/v1/text_questions/create`, {
+            method: 'POST',
+            body: JSON.stringify(text_question),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if  (data.error || data.notice) {
+                console.log("Failed to add question: " + (data.error||data.notice))
+            } else {
+                console.log("Question added: " + data.question);
+            }
+        })
+        .catch(console.log);
+    }
+
+    const createMCQuestion = async (question) => {
+        const mc_question = {
+            mc_question: {
+                question: question.question, 
+                // order: i,
+                survey_id: surveyId
+            }, 
+            mc_options: {
+                options: question.options
+            }
+        }
+
+        await fetch(`${baseUrl}/api/v1/mc_questions/create`, {
+            method: 'POST',
+            body: JSON.stringify(mc_question),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            if  (data.error || data.notice) {
+                console.log("Failed to add question: " + (data.error||data.notice))
+            } else {
+                console.log("Question added: " + data.question);
+            }
+        })
+        .catch(console.log);
+    }
     
     const handleSurveyAPIResponse = (data, messageType) => {
-        console.log(data);
         if (!data.error && !data.notice) {
             setSurveyName(data.title);
             setSurveyId(data.id);
+            setSurveyLink(`${baseUrl}/survey/${data.id}`);
+            if (messageType === "Submitted") {
+                handleOpen();
+            }
             console.log("\nSurvey " + data.title + " " + messageType + " with ID: " + data.id);
         } else {
             console.log("\n Error: " + (data.error || data.notice));
+            setError(data.error || data.notice);
+            handleOpenFailure();
         }
     }
 
     const handleAddQuestion = () => {
-        addQuestionAtIndex(questions.length)
+        const question = {
+            type: currentType,
+            question: ''
+        }
+        switch(currentType) {
+            case questionType.MULTIPLE_CHOICE:
+                question.options = [];
+                break;           
+            case questionType.NUMERICAL:
+                question.max = 0;
+                question.min = 0;
+                break;
+            case questionType.OPEN_ENDED:
+                break;
+            default:
+                console.log(`[WARNING] Unknown question type "${currentType}"`);
+        }
+        setQuestions([...questions, question])
     }
 
+    const deleteQuestion = (i) => {
+        questions.splice(i, 1)
+        setQuestions([...questions])
+    }
+
+    // Update the array of current questions upon a change
+    const updateQuestion = (i, newValue) => {
+        questions.splice(i, 1, newValue)
+        setQuestions([...questions])
+    }
+    
     const checkRequest = (res) => {
         if (res.status === 200) {
             return res.json();
@@ -91,78 +215,16 @@ const CreatSurvey = () => {
         }
     }
 
-    const addQuestionAtIndex = (i) => {
-        switch(currentType) {
-            case questionType.MULTIPLE_CHOICE:
-                setQuestions([
-                    ...questions.slice(0, i),
-                    {
-                        type: currentType,
-                        options: [],
-                        question: '',
-                    },
-                    ...questions.slice(i, questions.length)
-                ]);
-                break;               
-            case questionType.OPEN_ENDED:
-                setQuestions([
-                    ...questions.slice(0, i),
-                    {
-                        type: currentType,
-                        question: '',
-                    },
-                    ...questions.slice(i, questions.length)
-                ]);
-                break;               
-            case questionType.NUMERICAL:
-                setQuestions([
-                    ...questions.slice(0, i),
-                    {
-                        type: currentType,
-                        min: 0,
-                        max: 0,
-                        question: '',
-                    },
-                    ...questions.slice(i, questions.length)
-                ]);
-                break;
-            default:
-                console.log(`[WARNING] Unknown question type "${currentType}"`);
-        }
-    }
-
-    const deleteQuestion = (i) => {
-        setQuestions(questions.filter((q, current) => {
-            if (current === i) {
-                return false
-            }
-            return true
-        }))
-    }
-
-    // Update the array of current questions upon a change
-    const updateQuestion = (i, newValue) => {
-        setQuestions(questions.map((q, current) => {
-            if (current === i) {
-                return newValue
-            }
-            return true
-        }))
-    }
     
     return(
         <div className="createSurvey">          
             <Paper
-            component="form"
-            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 600 }}
             >
                 <Box
-                    component="form"
                     sx={{
                     '& .MuiTextField-root': { m: 1, width: '25ch' },
                     }}
-                    noValidate
-                    autoComplete="off"
                 >
                     <Stack spacing={2} direction="row">
                         <TextField
@@ -170,21 +232,21 @@ const CreatSurvey = () => {
                             id="survey-name"
                             label="Survey Name"
                             margin="dense"                          
-                            variant="standard"
+                            variant="outlined"
                             size="small"
                             color="secondary" 
                             focused
                             onChange={e => setSurveyName(e.target.value)}
                         />
                         <Button
-                            variant="outlined"                              
+                            variant="text"                              
                             color="secondary"
                             size="small"
                             onClick={handleCreateSurvey}
                         >Create Survey</Button>
                     </Stack>  
                     <Stack spacing={2} direction="row">
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                        <FormControl variant="outlined" sx={{ m: 1, minWidth: 120 }}>
                             <InputLabel id="qType-label" color="secondary">Question Type</InputLabel>
                             <Select 
                                 value={currentType}
@@ -195,12 +257,11 @@ const CreatSurvey = () => {
                             >
                                 <MenuItem value={questionType.OPEN_ENDED}>Open-Ended</MenuItem>                        
                                 <MenuItem value={questionType.MULTIPLE_CHOICE}>Multiple Choice</MenuItem>
-                                <MenuItem value={questionType.NUMERICAL}>Numerical</MenuItem>
+                                {/* <MenuItem value={questionType.NUMERICAL}>Numerical</MenuItem> */}
                             </Select>
                         </FormControl>
                         <Button
-                            label="Add Question" 
-                            variant="outlined" 
+                            variant="text" 
                             color="secondary" 
                             disabled={!currentType}
                             size="small" 
@@ -210,40 +271,17 @@ const CreatSurvey = () => {
                     {questions.map((q, i) => {
                             switch(q.type) {
                                 case questionType.OPEN_ENDED:
-                                    return (
-                                        <Stack spacing={2} direction="row">
-                                        <TextField
-                                            value={questions[i].question}
-                                            variant="outlined"
-                                            label="Title"
-                                            size="small"
-                                            color="secondary"
-                                            onChange={e => updateQuestion(i, {...q,question: e.target.value})}
-                                        />
-                                        <Button 
-                                            variant="outlined"
-                                            color="secondary"
-                                            size="small"
-                                            onClick={e => addQuestionAtIndex(i)}
-                                            >Add
-                                        </Button>
-                                        <Button 
-                                            variant="outlined"
-                                            color="secondary"
-                                            onClick={e => deleteQuestion(i)}
-                                            size="small"
-                                        >
-                                        <DeleteIcon/></Button>
-                                    </Stack>
-                                    )
+                                   return (<TextQuestion key={i} i={i} q={q} deleteQuestion={deleteQuestion} update={updateQuestion}></TextQuestion>)
+                                case questionType.MULTIPLE_CHOICE:
+                                    return (<MultipleChoice key={i} i={i} q={q} deleteQuestion={deleteQuestion} update={updateQuestion}></MultipleChoice>)
                             }
                         })
                     }
                             
                 </Box>
             </Paper>
+            <Modal open={open} handleClose={handleClose} title={"Success"} message={`Share this link to share the survey: ${surveyLink}`}/>
+            <Modal open={openFailure} handleClose={handleCloseFailure} title={"Failure"} message={`Error: ${error}`}/>
         </div>
     )
 }
-
-export default CreatSurvey
