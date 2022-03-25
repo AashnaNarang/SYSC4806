@@ -12,9 +12,10 @@ RSpec.describe "McQuestions", type: :request do
       it 'returns the mc_question if successful' do
 
         post '/api/v1/mc_questions/create', params: {mc_question: {question: "test_question", 
-        survey_id: survey.id}, mc_options: {options: ["op1", "op2"]}}
+        survey_id: survey.id, order: 1}, mc_options: {options: ["op1", "op2"]}}
         
         expect(JSON.parse(response.body)["question"]).to eql('test_question')
+        expect(JSON.parse(response.body)["order"]).to eql(1)
       end
     end
 
@@ -44,9 +45,10 @@ RSpec.describe "McQuestions", type: :request do
       it 'returns the mc_question if successful' do
 
         patch '/api/v1/mc_questions/1', params: {mc_question: {question: "test question#2", 
-        survey_id: survey.id}, mc_options: {options: ["op1", "op2"]}}
+        survey_id: survey.id, order: 2}, mc_options: {options: ["op1", "op2"]}}
         
         expect(JSON.parse(response.body)["question"]).to eql('test question#2')
+        expect(JSON.parse(response.body)["order"]).to eql(2)
       end
     end
   end
@@ -70,7 +72,7 @@ RSpec.describe "McQuestions", type: :request do
 
       it 'fails due survey id is a live survey' do
         post '/api/v1/mc_questions/create', params: {mc_question: {question: "test_question", 
-        survey_id: survey_live.id}, mc_options: {options: ["op1", "op2"]}}
+        survey_id: survey_live.id, order: 1}, mc_options: {options: ["op1", "op2"]}}
 
         expect(JSON.parse(response.body)["notice"]).to eql('Failure! Cannot update live survey')
       end
@@ -81,7 +83,7 @@ RSpec.describe "McQuestions", type: :request do
       it 'fails due survey id being invalid' do
 
         post '/api/v1/mc_questions/create', params: {mc_question: {question: "test_question", 
-        survey_id: 34234}, mc_options: {options: ["op1", "op2"]}}
+        survey_id: 34234, order: 1}, mc_options: {options: ["op1", "op2"]}}
 
         expect(JSON.parse(response.body)["error"]).to eql("Couldn't find Survey with 'id'=34234")
       end

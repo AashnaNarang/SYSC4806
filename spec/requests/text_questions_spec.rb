@@ -6,17 +6,18 @@ RSpec.describe "TextQuestions", type: :request do
 
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
     let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: false, wentLiveAt: nil)}
-    let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
+    let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 1)}
 
     describe "POST /api/v1/text_questions/create" do
 
       it 'returns the text_question if successful' do
 
         post '/api/v1/text_questions/create', params: {text_question: {question: "test_question", 
-        survey_id: survey.id}}
+        survey_id: survey.id, order: 1}}
 
         expect(JSON.parse(response.body)["question"]).to eql('test_question')
         expect(JSON.parse(response.body)["survey_id"]).to eql(survey.id)
+        expect(JSON.parse(response.body)["order"]).to eql(1)
       end
     end
 
@@ -44,14 +45,15 @@ RSpec.describe "TextQuestions", type: :request do
 
     describe "PATCH /api/v1/text_questions/:id" do
 
-      context "update both params"
+      context "update all params"
         it 'returns the text_question if successful' do
 
           patch '/api/v1/text_questions/1', params: {text_question: {question: "test question#2", 
-          survey_id: survey2.id}}
+          survey_id: survey2.id, order: 2}}
           
           expect(JSON.parse(response.body)["question"]).to eql('test question#2')
           expect(JSON.parse(response.body)["survey_id"]).to eql(survey2.id)
+          expect(JSON.parse(response.body)["order"]).to eql(2)
         end
       end
 
@@ -74,6 +76,16 @@ RSpec.describe "TextQuestions", type: :request do
           expect(JSON.parse(response.body)["survey_id"]).to eql(survey2.id)
         end
       end
+
+      context "update order only" do
+        it 'update only the order returns the text_question if successful' do
+
+          patch '/api/v1/text_questions/1', params: {text_question: {order: 3}}
+          
+          expect(JSON.parse(response.body)["question"]).to eql('test question')
+          expect(JSON.parse(response.body)["order"]).to eql(3)
+        end
+      end
     end
   end
 
@@ -94,7 +106,7 @@ RSpec.describe "TextQuestions", type: :request do
       context "question param is missing" do
         it 'fails due to missing question' do
 
-          post '/api/v1/text_questions/create', params: {text_question: { survey_id: survey.id}}
+          post '/api/v1/text_questions/create', params: {text_question: { survey_id: survey.id, order: 1}}
 
           expect(JSON.parse(response.body)["error"]).to eql('param is missing or the value is empty: question')
         end
@@ -103,9 +115,18 @@ RSpec.describe "TextQuestions", type: :request do
       context "survey_id param is missing" do
         it 'fails due to missing survey_id' do
 
-          post '/api/v1/text_questions/create', params: {text_question: {question:"test"} }
+          post '/api/v1/text_questions/create', params: {text_question: {question:"test", order: 1} }
 
           expect(JSON.parse(response.body)["error"]).to eql('param is missing or the value is empty: survey_id')
+        end
+      end
+
+      context "order param is missing" do
+        it 'fails due to missing order' do
+
+          post '/api/v1/text_questions/create', params: {text_question: {question:"test", survey_id: survey.id} }
+
+          expect(JSON.parse(response.body)["error"]).to eql('param is missing or the value is empty: order')
         end
       end
     end
@@ -115,7 +136,7 @@ RSpec.describe "TextQuestions", type: :request do
 
       it 'fails due survey id is a live survey' do
         post '/api/v1/text_questions/create', params: {text_question: {question: "test_question", 
-        survey_id: survey_live.id}}
+        survey_id: survey_live.id, order: 1}}
 
         expect(JSON.parse(response.body)["notice"]).to eql('Failure! Cannot update live survey')
       end
@@ -126,7 +147,7 @@ RSpec.describe "TextQuestions", type: :request do
       it 'fails due survey id being invalid' do
 
         post '/api/v1/text_questions/create', params: {text_question: {question: "test_question", 
-        survey_id: 23423423}}
+        survey_id: 23423423, order: 1}}
 
         expect(JSON.parse(response.body)["error"]).to eql("Couldn't find Survey with 'id'=23423423")
       end
@@ -176,7 +197,7 @@ RSpec.describe "TextQuestions", type: :request do
     describe "PATCH /api/v1/text_questions/:id with live survey" do
 
       let!(:survey_live) {Survey.create(title: "test", id: 2, isLive: true, wentLiveAt: DateTime.now)}
-      let!(:text_question_test_2) {TextQuestion.create(question: "test question", survey_id: survey_live.id, id: 2)}
+      let!(:text_question_test_2) {TextQuestion.create(question: "test question", survey_id: survey_live.id, id: 2, order: 1)}
 
       context "text_question's existing survey_id is live" do
         it 'fails due to live survey' do
