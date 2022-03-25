@@ -92,14 +92,15 @@ class Api::V1::TextQuestionsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def question_params_update
-      params.require(:text_question).permit(:question, :survey_id)
+      params.require(:text_question).permit(:question, :survey_id, :order)
     end
 
     # Only allow a list of trusted parameters through for the create method
     def question_params_create
-      params.require(:text_question).permit(:question, :survey_id).tap do |question_params|
+      params.require(:text_question).permit(:question, :survey_id, :order).tap do |question_params|
         question_params.require(:question)
         question_params.require(:survey_id)
+        question_params.require(:order)
       end
     end
 end

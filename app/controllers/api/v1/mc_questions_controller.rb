@@ -87,7 +87,7 @@ class Api::V1::McQuestionsController < ApplicationController
 
       # Only allow a list of trusted parameters through.
       def mc_question_params
-        params.require(:mc_question).permit(:question, :survey_id)
+        params.require(:mc_question).permit(:question, :survey_id, :order)
       end
 
       # Only allow a list of trusted parameters through.
