@@ -22,9 +22,9 @@
   "devDependencies": {
     "webpack": "latest",
     "webpack-dev-server": "^4.7.4",
-    "babel": "^8.3.1",
-    "babel-core": "^8.3.1",
-    "babel-loader": "^8.3.1"
+    "babel": "^7.11.0",
+    "babel-core": "^7.11.0",
+    "babel-loader": "^7.11.0"
 
   }
 }
