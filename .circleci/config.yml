@@ -1,11 +1,15 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
+#deoendancies
+orbs:
+  ruby: circleci/ruby@1.0
+  rails: finalcad/rails@2.3.0
+  node: circleci/node@2
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
+  build-dep:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
@@ -14,13 +18,44 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
+      - ruby/install-dep
+  test:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/base:stable
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - ruby/install-dep
+      - node/install-packages:
+          pkg-manager: yarn
+          cache-key: "yarn.lock"
+      # environment:
+      #   BUNDLE_JOBS: "3"
+      #   BUNDLE_RETRY: "3"
+      #   PGHOST: 127.0.0.1
+      #   PGUSER: circleci-demo-ruby
+      #   PGPASSWORD: ""
+      #   RAILS_ENV: test
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+        command:  |
+          TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
+          echo $TESTFILES
+          bundle exec rspec --profile 10 \
+                            --format << parameters.results_format >> \
+                            --out ~/test_reports/rspec.xml \
+                            --format progress \
+                            ${TESTFILES}  
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
-      - say-hello
+      - build-dep
+      - test
+
+
+
