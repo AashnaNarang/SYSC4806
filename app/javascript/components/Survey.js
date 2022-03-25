@@ -68,6 +68,26 @@ const Survey = () => {
         .catch(console.log);
     }
 
+    const updateResponder = async() => {
+        const responder = {
+            survey_responder: {
+                survey_responder_id: surveyResponder
+            }
+        }
+        await fetch(`${baseUrl}/api/v1/survey_responders/${surveyResponder}`, {
+            method: 'PATCH',
+            body: JSON.stringify(responder),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            setSurveyResponder(data.id);
+        })
+        .catch(console.log);
+    }
+
     const addResponses = (questions) => {
         let resps = [];
         questions.forEach((q) => {
@@ -108,6 +128,7 @@ const Survey = () => {
                     break;
             }
         });
+        await updateResponder();
 
     }
 
