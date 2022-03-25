@@ -38,4 +38,7 @@ Python version = 2.7.18
 
 ### Sprint 3 - March 8th - March 25th
 - **Plan**: The team plans to finish the Create Survey feature, make it so CircleCI runs our unit tests, and finish the Use Survey feature  [https://github.com/AashnaNarang/SYSC4806/issues/29].
+- **Accomplished**: The team finished the Create Survey feature and the Use Survey feature
 
+### Sprint 4 - March 25th - April 8th
+- **Plan**: The team plans to create a dashboard where you can see all the surveys that you can respond to, a button to create a survey, and end a survey+ see stats. The team also plans to finish a stats page for each survey.
