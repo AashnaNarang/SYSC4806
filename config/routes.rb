@@ -16,6 +16,13 @@ Rails.application.routes.draw do
       post 'mc_questions/create'
       delete 'mc_questions/:id', to: 'mc_questions#destroy'
       patch 'mc_questions/:id', to: 'mc_questions#update'
+
+      post 'text_responses/create'
+
+      post 'mc_responses/create'
+
+      post 'survey_responders/create'
+      patch 'survey_responders/:id', to: 'survey_responders#update'
     end
   end
 
