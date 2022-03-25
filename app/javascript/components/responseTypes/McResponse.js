@@ -27,7 +27,7 @@ class McResponse extends React.Component {
                     >
                         {response.mc_options.map((option, i) => {
                                 return(
-                                    <FormControlLabel value={option.id} control={<Radio />} label={option.option} />
+                                    <FormControlLabel key={i} value={option.id} control={<Radio />} label={option.option} />
                                 )
                             })
                         }

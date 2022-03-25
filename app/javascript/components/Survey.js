@@ -104,7 +104,7 @@ const Survey = () => {
                     await submitTextResponse(r.resp);
                     break;
                 case questionType.MULTIPLE_CHOICE:
-                    submitMcResponse(r.resp);
+                    await submitMcResponse(r.resp);
                     break;
             }
         });
@@ -133,11 +133,11 @@ const Survey = () => {
         .catch(console.log);
     }
 
-    const submitMcResponse = (resp) => {
+    const submitMcResponse = async (resp) => {
         var mc_response = {"mc_response": {"mc_option_id": resp.response, "mc_question_id": resp.mc_question_id,
-                                           "survey_responder_id": resp.survey_responder_id}}
+                                           "survey_responder_id": surveyResponder}}
 
-        fetch(`${baseUrl}/api/v1/mc_responses/create`, {
+        await fetch(`${baseUrl}/api/v1/mc_responses/create`, {
             method: 'POST',
             body: JSON.stringify(mc_response),
             headers: {
@@ -167,9 +167,9 @@ const Survey = () => {
                     {responses.map((r, i) => {
                             switch(r.question_type) {
                                 case questionType.OPEN_ENDED:
-                                   return (<TextResponse i={i} response={r} update={updateResponse}></TextResponse>)
+                                   return (<TextResponse key={i} i={i} response={r} update={updateResponse}></TextResponse>)
                                 case questionType.MULTIPLE_CHOICE:
-                                    return (<McResponse i={i} response={r} update={updateResponse}></McResponse>
+                                    return (<McResponse key={i} i={i} response={r} update={updateResponse}></McResponse>
                                     )
                             }
                         })
