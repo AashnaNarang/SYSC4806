@@ -26,6 +26,24 @@ jobs:
       - image: cimg/base:stable
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    parameters:
+      spec_dir:
+        type: string
+        default: spec
+      results_format:
+        type: string
+        default: progress
+        description: |
+          Rspec output formatter to be used besides default progress formatter.
+          Accepted option 'RspecJunitFormatter' requires installation of
+          rspec_junit_formatter gem
+      split_tests:
+        type: boolean
+        default: false
+        description: |
+          use for projects with large number of tests. It splits the tests
+          evenly between containers. Requires 'parallelism' parameter to be
+          set to more than default 1.
     steps:
       - checkout
       # - ruby/install-dep
