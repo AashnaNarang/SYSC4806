@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
 import TextResponse from './responseTypes/TextResponse'
+import McResponse from './responseTypes/McResponse'
+
  import {
     Button, 
     Typography,
@@ -80,6 +82,7 @@ const Survey = () => {
                     response.text_question_id = q.id;
                     break;
                 case questionType.MULTIPLE_CHOICE:
+                    response.mc_question_id = q.id
                     break;
             }
             q.resp = response;
@@ -99,11 +102,12 @@ const Survey = () => {
     const handleSubmitSurvey = () => {
         console.log(responses);
         responses.forEach((r) => {
-            switch(r.questionType) {
+            switch(r.question_type) {
                 case questionType.OPEN_ENDED:
                     // submitTextResponse(r.resp);
                     break;
                 case questionType.MULTIPLE_CHOICE:
+                    submitMcResponse(r.resp);
                     break;
             }
         });
@@ -113,6 +117,24 @@ const Survey = () => {
         fetch(`${baseUrl}/api/v1/text_responses/create`, {
             method: 'POST',
             body: JSON.stringify(resp),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            console.log(data);
+        })
+        .catch(console.log);
+    }
+
+    const submitMcResponse = (resp) => {
+        var mc_response = {"mc_response": {"mc_option_id": resp.response, "mc_question_id": resp.mc_question_id,
+                                           "survey_responder_id": resp.survey_responder_id}}
+
+        fetch(`${baseUrl}/api/v1/mc_responses/create`, {
+            method: 'POST',
+            body: JSON.stringify(mc_response),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -142,7 +164,8 @@ const Survey = () => {
                                 case questionType.OPEN_ENDED:
                                    return (<TextResponse i={i} response={r} update={updateResponse}></TextResponse>)
                                 case questionType.MULTIPLE_CHOICE:
-                                    return
+                                    return (<McResponse i={i} response={r} update={updateResponse}></McResponse>
+                                    )
                             }
                         })
                     }
