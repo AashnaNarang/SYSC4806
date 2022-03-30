@@ -58,15 +58,11 @@ jobs:
       #   PGPASSWORD: ""
       #   RAILS_ENV: test
       - run:
-        name: run it
-        command:  |
-          TESTFILES=$(circleci tests glob "spec/requests/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
-          echo $TESTFILES
-          bundle exec rspec --profile 10 \
-                            --out ~/test_reports/rspec.xml \
-                            --format progress \
-                            ${TESTFILES}  
-      ##--format << parameters.results_format >> \
+          command:  |
+            TESTFILES=$(circleci tests glob "spec/requests/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
+            echo $TESTFILES
+            bundle exec rspec --profile 10 --out ~/test_reports/rspec.xml --format progress ${TESTFILES}
+##--format << parameters.results_format >> \
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
