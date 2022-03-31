@@ -19,6 +19,34 @@ jobs:
   #   steps:
   #     - checkout
   #     - ruby/install-dep
+
+  build_dependancies:
+    description: Creating main test database
+    parameters:
+      use_structure_sql:
+        type: boolean
+        default: false
+    steps:
+      - run:
+          name: Wait for PostgreSQL
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Create database
+          command: bundle exec rake db:create
+      - when:
+          condition: << parameters.use_structure_sql >>
+          steps:
+            - run: 
+                name: Load schema
+                command: bundle exec rake db:structure:load --trace
+
+      - unless:
+          condition: << parameters.use_structure_sql >>
+          steps:
+            - run: 
+                name: Load schema
+                command: bundle exec rake db:schema:load
+
   test:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
