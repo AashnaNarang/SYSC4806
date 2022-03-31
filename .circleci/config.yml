@@ -21,6 +21,8 @@ jobs:
   #     - ruby/install-dep
 
   build_dependancies:
+    docker:
+      - image: cimg/base:stable
     description: Creating main test database
     parameters:
       use_structure_sql:
@@ -39,7 +41,6 @@ jobs:
             - run: 
                 name: Load schema
                 command: bundle exec rake db:structure:load --trace
-
       - unless:
           condition: << parameters.use_structure_sql >>
           steps:
