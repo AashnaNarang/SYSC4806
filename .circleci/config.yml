@@ -97,6 +97,7 @@ jobs:
 workflows:
   workflow:
     jobs:
+      - build_dependancies
       - test
 
 
