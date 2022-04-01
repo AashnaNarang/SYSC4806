@@ -90,8 +90,8 @@ export default function SurveyList() {
                     {survey.title}
                   </TableCell>
                   <TableCell align="right">{survey.isLive ? "True": "False"}</TableCell>
-                  <TableCell align="right">{survey.wentLiveAt ? moment(survey.wentLiveAt).utc().format("MMM D, YYYY HH:mm:ss") : "-"}</TableCell>
-                  <TableCell align="right">{survey.wentLiveAt ? moment(survey.wentLiveAt).utc().format("MMM D, YYYY HH:mm:ss") : "-"}</TableCell>
+                  <TableCell align="right">{survey.wentLiveAt ? moment(survey.wentLiveAt).format("MMM D, YYYY HH:mm:ss") : "-"}</TableCell>
+                  <TableCell align="right">{survey.wentLiveAt ? moment(survey.wentLiveAt).format("MMM D, YYYY HH:mm:ss") : "-"}</TableCell>
                   <TableCell align="right"><SurveyListActions surveyId={survey.id} isLive={survey.isLive}/></TableCell>
               </TableRow>
               ))}

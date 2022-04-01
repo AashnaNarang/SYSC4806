@@ -3,10 +3,13 @@ import React, { useState, useEffect} from 'react';
 import { FormControl } from '@mui/material';
 import { Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
+import Modal from './Modal';
 
 
 export default function SurveyListActions({key, surveyId, isLive}) {
     const [baseUrl, setBaseUrl] = useState('');
+    const [openFailure, setOpenFailure] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,6 +22,14 @@ export default function SurveyListActions({key, surveyId, isLive}) {
       } else {
           throw res;
       }
+    }
+
+    const handleOpenFailure = () => {
+        setOpenFailure(true);
+    }
+
+    const handleCloseFailure = () => {
+        setOpenFailure(false);
     }
 
     const handleChange = (e) => {
@@ -40,9 +51,13 @@ export default function SurveyListActions({key, surveyId, isLive}) {
         })
         .then(checkRequest)
         .then(data => {
-            console.log(data);
-            console.log("Closed the survey");
+          if (!data.error && !data.notice) {
             navigate("/surveyResponses/" + surveyId)
+          } else {
+            console.log("\n Error: " + (data.error || data.notice));
+            setError(data.error || data.notice);
+            handleOpenFailure();
+          }
         })
         .catch(console.log);
       } else if (action == "view") {
@@ -83,6 +98,7 @@ export default function SurveyListActions({key, surveyId, isLive}) {
               )
             }
         </FormControl>
+        <Modal open={openFailure} handleClose={handleCloseFailure} title={"Failure"} message={`Error: ${error}`}/>
       </div>
     )
 }
