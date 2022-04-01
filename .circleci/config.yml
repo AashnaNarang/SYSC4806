@@ -57,7 +57,7 @@ executors:
         type: string
         default: "9.6.16"
 
-commands:
+jobs:
   clone_repo:
     description: Command for cloning second repository into working directory
     parameters:
@@ -67,8 +67,6 @@ commands:
         description: Address of repo to be cloned
     steps: 
       - run: git clone << parameters.repo_url >>
-
-jobs:
   test:
     docker:
       - image: cimg/base:stable
@@ -114,6 +112,7 @@ jobs:
 workflows:
   workflow:
     jobs:
+      - clone_repo
       - test
 
 
