@@ -1,5 +1,5 @@
 class Api::V1::SurveysController < ApplicationController
-  before_action :set_survey, only: [:show, :edit, :update, :destroy]
+  before_action :set_survey, only: [:show, :edit, :update, :destroy, :survey_responses]
   skip_before_action :verify_authenticity_token
   
   # GET /surveys or /surveys.json
@@ -109,10 +109,25 @@ class Api::V1::SurveysController < ApplicationController
         if question.is_a?(McQuestion)
           json_question = question.as_json(include: :mc_options)
           json_question[:question_type] = "mc"
+
+          if question.mc_responses.any?
+            mc_responses = question.mc_responses
+            mc_options_id_map = question.mc_options.map{ |option| [option.id, option.option]}.to_h
+            mc_option_count = mc_responses.group_by{|mc_response| mc_response.mc_option_id}.map{|mc_option_id, instances| [mc_options_id_map[mc_option_id], instances.count]}.to_h
+            json_question[:mc_responses] = mc_option_count
+          end
+
           json_msg.append(json_question)
         elsif question.is_a?(TextQuestion)
           json_question = question.as_json
           json_question[:question_type] = "text"
+
+          if question.text_responses.any?
+            text_responses = question.text_responses
+            only_text = text_responses.map{|text_response| text_response.response}
+            json_question[:text_responses] = only_text
+          end
+
           json_msg.append(json_question)
         end
       end
