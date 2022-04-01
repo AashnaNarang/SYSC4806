@@ -84,6 +84,31 @@ RSpec.describe "Surveys", type: :request do
 
     end
 
+    describe "GET /api/v1/surveys/:id with questions and responses" do 
+
+      let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 2)}
+      let!(:mc_option_test) {(McOption.create(option: "option1", mc_question_id: mc_question_test.id))}
+      let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 1)}
+      let!(:survey_responder_test) {SurveyResponder.create(survey_id: survey.id, respondedAt: Time.now)}
+      let!(:mc_response_test) {McResponse.create(mc_question_id: mc_question_test.id, mc_option_id: mc_option_test.id, survey_responder_id: survey_responder_test.id)}
+      let!(:text_responses) {TextResponse.create(text_question_id: text_question_test.id, survey_responder_id: survey_responder_test.id, response: 'test_response')}
+
+      it 'returns the specified surveys if successful' do
+
+        survey.mc_questions << mc_question_test
+        survey.text_questions << text_question_test
+
+        get '/api/v1/surveys/1'
+        expect(JSON.parse(response.body)["survey"]["title"]).to eql('test')
+        expect(JSON.parse(response.body)["survey"]["id"]).to eql(survey.id)
+        expect(JSON.parse(response.body)["questions"][0]["question_type"]).to eql('text')
+        expect(JSON.parse(response.body)["questions"][0]["text_responses"][0]).to eql('test_response')
+        expect(JSON.parse(response.body)["questions"][1]["question_type"]).to eql('mc')
+        expect(JSON.parse(response.body)["questions"][1]["mc_responses"]["option1"]).to eql(1)
+      end
+
+    end
+
     describe "PATCH /api/v1/surveys/:id" do
 
       context "update both params" do
