@@ -1,5 +1,5 @@
 class Api::V1::SurveysController < ApplicationController
-  before_action :set_survey, only: [:show, :edit, :update, :destroy, :survey_responses]
+  before_action :set_survey, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
   
   # GET /surveys or /surveys.json
