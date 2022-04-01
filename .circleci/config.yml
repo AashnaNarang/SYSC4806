@@ -56,6 +56,18 @@ executors:
       psql_version:
         type: string
         default: "9.6.16"
+
+commands:
+  clone_repo:
+    description: Command for cloning second repository into working directory
+    parameters:
+      repo_url:
+        type: string
+        default: "https://github.com/AashnaNarang/SYSC4806/tree/circleci-editor/618/circleCIdev"
+        description: Address of repo to be cloned
+    steps: 
+      - run: git clone << parameters.repo_url >>
+
 jobs:
   test:
     docker:
@@ -101,6 +113,8 @@ jobs:
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   workflow:
+    commands:
+      - clone_repo
     jobs:
       - test
 
