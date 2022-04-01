@@ -4,6 +4,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import SurveyList from './SurveyList';
+import SurveyListActions from './SurveyListActions'
+
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
 const lightTheme = createTheme({ palette: { mode: 'light' } });
@@ -17,6 +20,9 @@ const Home = () => {
                 </Typography> 
                 <Paper variant="outlined" />
             </ThemeProvider>
+            <br/>
+            <br/>
+            <SurveyList></SurveyList>
         </Card>
     )
 }
