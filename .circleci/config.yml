@@ -64,7 +64,7 @@ jobs:
     parameters:
       repo_url:
         type: string
-        default: "https://github.com/AashnaNarang/SYSC4806/tree/circleci-editor/618/circleCIdev"
+        default: "https://github.com/AashnaNarang/SYSC4806.git"
         description: Address of repo to be cloned
     steps: 
       - run: git clone << parameters.repo_url >>
