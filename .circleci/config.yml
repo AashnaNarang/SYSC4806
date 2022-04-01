@@ -59,6 +59,7 @@ executors:
 
 jobs:
   clone_repo:
+    executor: default
     description: Command for cloning second repository into working directory
     parameters:
       repo_url:
