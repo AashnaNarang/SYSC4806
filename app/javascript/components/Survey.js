@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
 import TextResponse from './responseTypes/TextResponse'
+import McResponse from './responseTypes/McResponse'
+
  import {
     Button, 
     Typography,
@@ -66,6 +68,26 @@ const Survey = () => {
         .catch(console.log);
     }
 
+    const updateResponder = async() => {
+        const responder = {
+            survey_responder: {
+                survey_responder_id: surveyResponder
+            }
+        }
+        await fetch(`${baseUrl}/api/v1/survey_responders/${surveyResponder}`, {
+            method: 'PATCH',
+            body: JSON.stringify(responder),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            setSurveyResponder(data.id);
+        })
+        .catch(console.log);
+    }
+
     const addResponses = (questions) => {
         let resps = [];
         questions.forEach((q) => {
@@ -78,6 +100,7 @@ const Survey = () => {
                     response.text_question_id = q.id;
                     break;
                 case questionType.MULTIPLE_CHOICE:
+                    response.mc_question_id = q.id
                     break;
             }
             q.resp = response;
@@ -93,6 +116,7 @@ const Survey = () => {
         setResponses([...responses])
     }
 
+
     const handleSubmitSurvey = async () => {
         await responses.forEach(async (r) => {
             switch(r.question_type) {
@@ -100,9 +124,11 @@ const Survey = () => {
                     await submitTextResponse(r.resp);
                     break;
                 case questionType.MULTIPLE_CHOICE:
+                    await submitMcResponse(r.resp);
                     break;
             }
         });
+        await updateResponder();
 
     }
 
@@ -128,6 +154,24 @@ const Survey = () => {
         .catch(console.log);
     }
 
+    const submitMcResponse = async (resp) => {
+        var mc_response = {"mc_response": {"mc_option_id": resp.response, "mc_question_id": resp.mc_question_id,
+                                           "survey_responder_id": surveyResponder}}
+
+        await fetch(`${baseUrl}/api/v1/mc_responses/create`, {
+            method: 'POST',
+            body: JSON.stringify(mc_response),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(checkRequest)
+        .then(data => {
+            console.log(data);
+        })
+        .catch(console.log);
+    }
+
     return(
         <div className="survey">
             <Typography variant="h2">{title}</Typography>
@@ -144,9 +188,10 @@ const Survey = () => {
                     {responses.map((r, i) => {
                             switch(r.question_type) {
                                 case questionType.OPEN_ENDED:
-                                   return (<TextResponse i={i} response={r} update={updateResponse}></TextResponse>)
+                                   return (<TextResponse key={i} i={i} response={r} update={updateResponse}></TextResponse>)
                                 case questionType.MULTIPLE_CHOICE:
-                                    return
+                                    return (<McResponse key={i} i={i} response={r} update={updateResponse}></McResponse>
+                                    )
                             }
                         })
                     }
