@@ -6,6 +6,7 @@ Ruby version = 3.0.3
 Rails version = 7.0.2.2
 Node Version = any 
 Python version = 2.7.18
+PostgreSQL version = 14.2
 
 ## Setup Instructions
 1. Go to https://nodejs.org/en/download/ and install node js
