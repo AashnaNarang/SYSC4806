@@ -37,7 +37,9 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - ruby/install-deps
+      - run:
+          name: Install Dependancies
+          command: bundle install
       - node/install-packages:
           pkg-manager: yarn
           cache-key: "yarn.lock"
@@ -60,12 +62,12 @@ jobs:
       RAILS_ENV: test
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: yarn
-          cache-key: "yarn.lock"
       - run:
           name: Install Dependancies
           command: bundle install
+      - node/install-packages:
+          pkg-manager: yarn
+          cache-key: "yarn.lock"
       - run:
           name: DB Locate
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
