@@ -60,10 +60,12 @@ jobs:
       RAILS_ENV: test
     steps:
       - checkout
-      - ruby/install-deps
       - node/install-packages:
           pkg-manager: yarn
           cache-key: "yarn.lock"
+      - run:
+          name: Install Dependancies
+          command: bundle install
       - run:
           name: DB Locate
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
@@ -84,6 +86,3 @@ workflows:
     jobs:
       - build
       - test
-
-
-
