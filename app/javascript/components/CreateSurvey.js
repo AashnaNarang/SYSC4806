@@ -80,9 +80,9 @@ export default function CreateSurvey() {
         for(let i = 0; i < questions.length; i++) {
             let question = questions[i];
             if (question.type === questionType["OPEN_ENDED"]) {
-                await createTextQuestion(question);
+                await createTextQuestion(question, i);
             } else if (question.type === questionType["MULTIPLE_CHOICE"]) {
-                await createMCQuestion(question);
+                await createMCQuestion(question, i);
             } else {
                 console.log("Error: Invalid question type submitted");
             }
@@ -102,11 +102,11 @@ export default function CreateSurvey() {
         .catch(console.log);
     };
 
-    const createTextQuestion = async (question) => {
+    const createTextQuestion = async (question, i) => {
         const text_question = {
             text_question: {
                 question: question.question, 
-                // order: i,
+                order: i,
                 survey_id: surveyId
             }
         }
@@ -129,11 +129,11 @@ export default function CreateSurvey() {
         .catch(console.log);
     }
 
-    const createMCQuestion = async (question) => {
+    const createMCQuestion = async (question, i) => {
         const mc_question = {
             mc_question: {
                 question: question.question, 
-                // order: i,
+                order: i,
                 survey_id: surveyId
             }, 
             mc_options: {
