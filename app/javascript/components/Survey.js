@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
 import TextResponse from './responseTypes/TextResponse'
 import McResponse from './responseTypes/McResponse'
+import Modal from './Modal';
+import { useNavigate } from 'react-router-dom'
 
  import {
     Button, 
@@ -22,6 +24,8 @@ const Survey = () => {
     const [title, setTitle] = useState('');
     const [surveyResponder, setSurveyResponder] = useState('');
     const [responses, setResponses] = useState([]);
+    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
 
     const checkRequest = (res) => {
         if (res.status === 200) {
@@ -31,9 +35,17 @@ const Survey = () => {
         }
     }
 
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+        navigate("/")
+    }
+
     useEffect(async () => {
         setBaseUrl(window.location.origin.replace(/\/#.*/, ""));
-        await createResponder();
         await fetch(`${baseUrl}/api/v1/surveys/${surveyId}`, {
             method: 'GET',
             headers: {
@@ -41,7 +53,12 @@ const Survey = () => {
             },
         })
         .then(checkRequest)
-        .then(data => {
+        .then(async (data) => {
+            console.log(data.survey.isLive)
+            if(!data.survey.isLive) {
+                handleOpen();
+            }
+            await createResponder();
             setTitle(data.survey.title);
             addResponses(data.questions);
         })
@@ -207,7 +224,7 @@ const Survey = () => {
             </Paper>
             <br/>
             <br/>
-
+            <Modal open={open} handleClose={handleClose} title={"Error"} message={`This survey currently is not live. Try again later.`}/>
         </div>
     )
 }
