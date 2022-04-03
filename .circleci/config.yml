@@ -1,31 +1,76 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-#deoendancies
+#ORBS NOT AUTHORIZED
 #orbs:
-  #ruby: circleci/ruby@1.0
- # rails: finalcad/rails@2.3.0
-  #node: circleci/node@2
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+#  rails: finalcad/rails@2.3.0
+#  node: circleci/node@2
+
+executors:
+  default:
+    docker:
+      # include node
+      - image: circleci/ruby:<< parameters.ruby_version >>
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_PATH: ./vendor/bundle
+          RAILS_ENV: test
+          DB_USERNAME: db_username
+          DB_NAME: test_database
+          DB_PASSWORD: ''
+      - image: circleci/postgres:<< parameters.psql_version >>
+        environment:
+          #POSTGRES_USER: db_username
+          POSTGRES_DB: db/development
+          #POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+    parameters:
+      ruby_version:
+        type: string
+        default: 2.5.1-stretch-node
+      psql_version:
+        type: string
+        default: "9.6.16"
+  with_redis:
+    docker:
+      # include node
+      - image: circleci/ruby:<< parameters.ruby_version >>
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_PATH: ./vendor/bundle
+          RAILS_ENV: test
+          DB_USERNAME: db_username
+          DB_NAME: test_database
+          DB_PASSWORD: ''
+      - image: circleci/postgres:<< parameters.psql_version >>
+        environment:
+          POSTGRES_USER: db_username
+          POSTGRES_DB: test_database
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+      - image: circleci/redis
+    parameters:
+      ruby_version:
+        type: string
+        default: 2.5.1-stretch-node
+      psql_version:
+        type: string
+        default: "9.6.16"
+
 jobs:
-  # build-dep:
-  #   # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-  #   # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-  #   docker:
-  #     - image: cimg/base:stable
-  #   # Add steps to the job
-  #   # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-  #   steps:
-  #     - checkout
-  #     - ruby/install-dep
+  clone_repo:
+    executor: default
+    description: Command for cloning second repository into working directory
+    parameters:
+      repo_url:
+        type: string
+        default: "https://github.com/AashnaNarang/SYSC4806.git"
+        description: Address of repo to be cloned
+    steps: 
+      - run: git clone << parameters.repo_url >>
   test:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
       - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     parameters:
       spec_dir:
         type: string
@@ -58,21 +103,17 @@ jobs:
       #   PGPASSWORD: ""
       #   RAILS_ENV: test
       - run:
-        name: run it
-        command:  |
-          TESTFILES=$(circleci tests glob "spec/requests/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
-          echo $TESTFILES
-          bundle exec rspec --profile 10 \
-                            --out ~/test_reports/rspec.xml \
-                            --format progress \
-                            ${TESTFILES}  
-      ##--format << parameters.results_format >> \
+          command:  |
+            TESTFILES=$(circleci tests glob "spec/requests/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
+            echo $TESTFILES
+      #bundle exec rspec --profile 10 --out ~/test_reports/rspec.xml --format progress ${TESTFILES}##--format << parameters.results_format >> \
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   workflow:
     jobs:
+      - clone_repo
       - test
 
 
