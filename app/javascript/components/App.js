@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './Home'
 import CreateSurvey from './CreateSurvey'
 import Survey from './Survey'
+import MetricsPage from './MetricsPage';
 
 const App = () => {
     return(   
@@ -13,6 +14,7 @@ const App = () => {
         />
         <Routes>
             <Route path='/' element={<Home />} />
+            <Route path='/surveyResponses/:surveyId' element={<MetricsPage />} />
             <Route path='/createSurvey' element={<CreateSurvey />} />
             <Route path='/survey/:surveyId' element={<Survey />} />
         </Routes>
