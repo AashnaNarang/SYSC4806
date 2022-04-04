@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-
-
-const darkTheme = createTheme({ palette: { mode: 'dark' } });
-const lightTheme = createTheme({ palette: { mode: 'light' } });
 
 const MetricsPage = () => {
     const { surveyId } = useParams();
