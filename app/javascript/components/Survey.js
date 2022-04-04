@@ -54,13 +54,13 @@ const Survey = () => {
         })
         .then(checkRequest)
         .then(async (data) => {
-            console.log(data.survey.isLive)
             if(!data.survey.isLive) {
                 handleOpen();
+            } else {
+                await createResponder();
+                setTitle(data.survey.title);
+                addResponses(data.questions);
             }
-            await createResponder();
-            setTitle(data.survey.title);
-            addResponses(data.questions);
         })
         .catch(console.log);
     }, []);
