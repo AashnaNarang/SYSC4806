@@ -61,6 +61,9 @@ jobs:
           name: DB Setup
           command: bundle exec rails db:schema:load --trace
       - run:
+          name: rake
+          command: rake db:migrate RAILS_ENV=test
+      - run:
           name: Run RSPEC
           command:  |
             TESTFILES=$(circleci tests glob "spec/requests/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
