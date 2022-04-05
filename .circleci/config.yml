@@ -20,35 +20,10 @@ executors:
           DB_PASSWORD: ''
       - image: circleci/postgres:<< parameters.psql_version >>
         environment:
-          #POSTGRES_USER: db_username
+          POSTGRES_USER: postgres
           POSTGRES_DB: db/development
-          #POSTGRES_PASSWORD: ''
+          POSTGRES_PASSWORD: '1234'
           POSTGRES_HOST_AUTH_METHOD: trust
-    parameters:
-      ruby_version:
-        type: string
-        default: 2.5.1-stretch-node
-      psql_version:
-        type: string
-        default: "9.6.16"
-  with_redis:
-    docker:
-      # include node
-      - image: circleci/ruby:<< parameters.ruby_version >>
-        environment:
-          BUNDLE_JOBS: 3
-          BUNDLE_PATH: ./vendor/bundle
-          RAILS_ENV: test
-          DB_USERNAME: db_username
-          DB_NAME: test_database
-          DB_PASSWORD: ''
-      - image: circleci/postgres:<< parameters.psql_version >>
-        environment:
-          POSTGRES_USER: db_username
-          POSTGRES_DB: test_database
-          POSTGRES_PASSWORD: ''
-          POSTGRES_HOST_AUTH_METHOD: trust
-      - image: circleci/redis
     parameters:
       ruby_version:
         type: string
@@ -58,63 +33,42 @@ executors:
         default: "9.6.16"
 
 jobs:
-  clone_repo:
-    executor: default
-    description: Command for cloning second repository into working directory
-    parameters:
-      repo_url:
-        type: string
-        default: "https://github.com/AashnaNarang/SYSC4806.git"
-        description: Address of repo to be cloned
-    steps: 
-      - run: git clone << parameters.repo_url >>
   test:
     docker:
-      - image: cimg/base:stable
-    parameters:
-      spec_dir:
-        type: string
-        default: spec
-      results_format:
-        type: string
-        default: progress
-        description: |
-          Rspec output formatter to be used besides default progress formatter.
-          Accepted option 'RspecJunitFormatter' requires installation of
-          rspec_junit_formatter gem
-      split_tests:
-        type: boolean
-        default: false
-        description: |
-          use for projects with large number of tests. It splits the tests
-          evenly between containers. Requires 'parallelism' parameter to be
-          set to more than default 1.
+      - image: cimg/ruby:3.0.3-node
+      - image: cimg/postgres:14.0
+        environment: # add POSTGRES environment variables.
+          POSTGRES_USER: postgres
+          POSTGRES_DB: db/test
+          POSTGRES_PASSWORD: "1234"
+    #parallelism: 3
+    environment:
+      BUNDLE_JOBS: "3"
+      BUNDLE_RETRY: "3"
+      PGHOST: 127.0.0.1
+      PGUSER: postgres
+      PGPASSWORD: "1234"
+      RAILS_ENV: test
     steps:
       - checkout
-      # - ruby/install-dep
-      # - node/install-packages:
-      #     pkg-manager: yarn
-      #     cache-key: "yarn.lock"
-      # environment:
-      #   BUNDLE_JOBS: "3"
-      #   BUNDLE_RETRY: "3"
-      #   PGHOST: 127.0.0.1
-      #   PGUSER: circleci-demo-ruby
-      #   PGPASSWORD: ""
-      #   RAILS_ENV: test
       - run:
+          name:  Bundle Install
+          command: bundle install
+      - run:
+          name: DB Locate
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: DB Setup
+          command: bundle exec rails db:schema:load --trace
+      - run:
+          name: Run RSPEC
           command:  |
             TESTFILES=$(circleci tests glob "spec/requests/*_spec.rb" | circleci tests split --split-by=timings --timings-type=classname)
             echo $TESTFILES
-      #bundle exec rspec --profile 10 --out ~/test_reports/rspec.xml --format progress ${TESTFILES}##--format << parameters.results_format >> \
-
+            bundle exec rspec --profile 10 --out ~/test_reports/rspec.xml --format progress ${TESTFILES} --format progress \
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   workflow:
     jobs:
-      - clone_repo
       - test
-
-
-
