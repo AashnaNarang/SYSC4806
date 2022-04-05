@@ -66,8 +66,17 @@ class Api::V1::SurveysController < ApplicationController
       rescue ActionController::ParameterMissing => error
         render json: {error: error.message}
       end
-    else
-      render json: {notice: 'Failure! Cannot update live survey'}
+    else 
+      #render json: {notice: 'Failure! Cannot update live survey'}
+      begin
+        params = survey_params_update
+        if params[:isLive] == "false"
+          @survey.closedOnDate = DateTime.now()
+        end
+
+        if @survey.closedOnDate
+          render json: {notice: 'Failure! Cannot update closed survey'}
+        end
     end
   end
 
