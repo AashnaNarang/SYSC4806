@@ -51,34 +51,28 @@ class Api::V1::SurveysController < ApplicationController
 
   # PATCH/PUT /surveys/1 or /surveys/1.json
   def update
-    if !@survey.isLive
-      begin
-        params = survey_params_update
-        if params[:isLive]
-          params[:wentLiveAt] = DateTime.now()
-        end
-
-        if @survey.update(params)
-          render json: @survey
-        else
-          render json: {notice: "Failure! Could not save Survey due to #{@survey.errors.full_messages}"}
-        end
-      rescue ActionController::ParameterMissing => error
-        render json: {error: error.message}
+    begin
+      params = survey_params_update
+      if params[:isLive]
+        params[:wentLiveAt] = DateTime.now()
       end
-    else 
-      #render json: {notice: 'Failure! Cannot update live survey'}
-      begin
-        params = survey_params_update
-        if params[:isLive] == "false"
-          @survey.closedOnDate = DateTime.now()
-        end
-
-        if @survey.closedOnDate
+      else
+        @survey.closedOnDate = DateTime.now()
+      end
+        
+      if @survey.closedOnDate
           render json: {notice: 'Failure! Cannot update closed survey'}
-        end
+      end
+      
+      if @survey.update(params)
+        render json: @survey
+      else
+        render json: {notice: "Failure! Could not save Survey due to #{@survey.errors.full_messages}"}
+      end
+    rescue ActionController::ParameterMissing => error
+      render json: {error: error.message}
     end
-  end
+  endp
 
   # DELETE /surveys/1 or /surveys/1.json
   def destroy
