@@ -56,7 +56,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_17_174955) do
     t.datetime "wentLiveAt", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "closedOnDate", null: false
   end
 
   create_table "text_questions", force: :cascade do |t|
