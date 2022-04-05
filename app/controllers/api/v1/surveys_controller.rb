@@ -72,7 +72,7 @@ class Api::V1::SurveysController < ApplicationController
     rescue ActionController::ParameterMissing => error
       render json: {error: error.message}
     end
-  endp
+  end
 
   # DELETE /surveys/1 or /surveys/1.json
   def destroy
