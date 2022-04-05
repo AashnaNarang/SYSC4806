@@ -80,7 +80,6 @@ export default function SurveyList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {console.log(surveys)}
               {surveys.map((survey) => (
                 <TableRow
                 key={survey.id}
