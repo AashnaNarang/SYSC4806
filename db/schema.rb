@@ -15,7 +15,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_17_174955) do
   enable_extension "plpgsql"
 
   create_table "mc_options", force: :cascade do |t|
-    t.string "option"
+    t.text "option"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "mc_question_id"
@@ -51,7 +51,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_17_174955) do
   end
 
   create_table "surveys", force: :cascade do |t|
-    t.string "title"
+    t.text "title"
     t.boolean "isLive"
     t.datetime "wentLiveAt", precision: nil
     t.datetime "created_at", null: false
