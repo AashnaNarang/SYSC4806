@@ -36,7 +36,7 @@ jobs:
   ruby-install-deps:
     docker:
       - image: cimg/base:stable
-      - image: cimg/ruby:2.7-node
+      - image: cimg/ruby:3.0.3-node
     parameters:
       app-dir:
         default: .
@@ -45,7 +45,7 @@ jobs:
           lives in the root.
         type: string
       bundler-version:
-        default: ''
+        default: '2.7.3'
         description: >
           Configure which version of bundler to install and utilize. By default, it
           gets the bundler version from Gemfile.lock, but if it is not working use
@@ -131,7 +131,7 @@ jobs:
 
   test:
     docker:
-      - image: cimg/ruby:2.7-node
+      - image: cimg/ruby:3.0.3-node
       - image: cimg/postgres:14.0
         environment: # add POSTGRES environment variables.
           POSTGRES_USER: postgres
