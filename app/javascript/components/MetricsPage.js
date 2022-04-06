@@ -38,7 +38,6 @@ const MetricsPage = () => {
         })
         .then(checkRequest)
         .then(data => {
-            console.log(data)
             setTitle(data.survey.title);
             setResponses(data.questions)
         })
