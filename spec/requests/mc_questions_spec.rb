@@ -2,11 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "McQuestions", type: :request do
 
-  describe "positive tests" do 
-
+  describe "postive test 1" do
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
-    let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
-
     describe "POST /api/v1/mc_questions/create" do
 
       it 'returns the mc_question if successful' do
@@ -18,6 +15,12 @@ RSpec.describe "McQuestions", type: :request do
         expect(JSON.parse(response.body)["order"]).to eql(1)
       end
     end
+  end
+
+  describe "positive tests" do 
+
+    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
+    let!(:mc_question_test) {McQuestion.create(question: "test question", survey_id: survey.id, id: 1)}
 
     describe "DELETE /api/v1/mc_questions/:id" do 
 

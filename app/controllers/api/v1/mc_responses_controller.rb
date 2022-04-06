@@ -10,6 +10,9 @@ class Api::V1::McResponsesController < ApplicationController
         rescue ActiveRecord::ActiveRecordError => error
           render json: {error: error.message}
           return
+        rescue ActionController::ParameterMissing => error
+          render json: {error: error.message}
+          return
         end
 
         # Add reponse into database if survey is live

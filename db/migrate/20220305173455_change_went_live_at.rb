@@ -1,5 +1,6 @@
 class ChangeWentLiveAt < ActiveRecord::Migration[7.0]
   def change
-      change_column :surveys, :wentLiveAt, :datetime
+      remove_column :surveys, :wentLiveAt
+      add_column :surveys, :wentLiveAt, :datetime
   end
 end

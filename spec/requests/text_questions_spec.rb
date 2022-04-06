@@ -2,12 +2,9 @@ require 'rails_helper'
 
 RSpec.describe "TextQuestions", type: :request do
 
-  describe "positive tests" do 
-
+  describe "positive tests 1" do
     let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
-    let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: false, wentLiveAt: nil)}
-    let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 1)}
-
+    
     describe "POST /api/v1/text_questions/create" do
 
       it 'returns the text_question if successful' do
@@ -20,6 +17,12 @@ RSpec.describe "TextQuestions", type: :request do
         expect(JSON.parse(response.body)["order"]).to eql(1)
       end
     end
+  end
+
+  describe "positive tests" do 
+    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
+    let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: false, wentLiveAt: nil)}
+    let!(:text_question_test) {TextQuestion.create(question: "test question", survey_id: survey.id, id: 1, order: 1)}
 
     describe "DELETE /api/v1/text_questions/:id" do 
 

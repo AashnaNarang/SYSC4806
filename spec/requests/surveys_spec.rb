@@ -2,22 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Surveys", type: :request do
 
-  describe "positive tests" do 
-
-    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
-    let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: true, wentLiveAt: DateTime.now())}
-
-    describe "GET /api/v1/surveys/index" do
-
-      it 'returns all surveys' do
-
-        get '/api/v1/surveys/index'
-
-        expect(JSON.parse(response.body)[0]["id"]).to eql(survey.id)
-        expect(JSON.parse(response.body)[1]["id"]).to eql(survey2.id)
-      end
-    end
-
+  describe "positive test 1" do 
     describe "POST /api/v1/surveys/create" do
 
       context "isLive is false" do
@@ -42,6 +27,25 @@ RSpec.describe "Surveys", type: :request do
         end
       end 
     end
+  end
+
+  describe "positive tests" do 
+
+    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
+    let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: true, wentLiveAt: DateTime.now())}
+
+    describe "GET /api/v1/surveys/index" do
+
+      it 'returns all surveys' do
+
+        get '/api/v1/surveys/index'
+
+        expect(JSON.parse(response.body)[0]["id"]).to eql(survey.id)
+        expect(JSON.parse(response.body)[1]["id"]).to eql(survey2.id)
+      end
+    end
+
+    
 
     describe "DELETE /api/v1/surveys/:id" do 
 
