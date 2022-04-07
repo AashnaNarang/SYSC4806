@@ -57,7 +57,7 @@ const MetricsPage = () => {
                     {responses.map((response, i) => {
                             switch(response.question_type) {
                                 case questionType.OPEN_ENDED:
-                                   return (<TextMetrics> key={i} response={response}</TextMetrics>)
+                                   return (<TextMetrics key={i} response={response}></TextMetrics>)
                                 case questionType.MULTIPLE_CHOICE:
                                     return (<McMetrics key={i} response={response}></McMetrics>)
                             }
