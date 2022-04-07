@@ -1,9 +1,9 @@
 
 # SYSC4806
 - Notion https://www.notion.so/SYSC-4806-Project-a9e49531d8364814aff20f7801e1a080. Notion was used to organize and store the meeting notes, the tech docs, the roadmap, and much more. 
+- **ALL OTHER DOCUMENTATION CAN BE FOUND HERE https://github.com/AashnaNarang/SYSC4806/wiki**
 
-**ALL OTHER DOCUMENTATION CAN BE FOUND HERE https://github.com/AashnaNarang/SYSC4806/wiki**
-
+## Version Numbers
 Ruby version = 3.0.3
 Rails version = 7.0.2.2
 Node Version = any 
