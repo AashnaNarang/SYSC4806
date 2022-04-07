@@ -139,7 +139,7 @@ RSpec.describe "Surveys", type: :request do
       end
       
       context "update isLive only" do
-        it 'update only the survey_id returns the survey if successful' do
+        it 'update only the isLive returns the survey if successful' do
 
           patch '/api/v1/surveys/1', params: {survey: {isLive: true}}
           
@@ -148,12 +148,24 @@ RSpec.describe "Surveys", type: :request do
           expect(JSON.parse(response.body)["wentLiveAt"]).not_to be(nil)
         end
       end
+
+      context "update to close the survey" do
+        it 'update isLive from true to false returns the survey if successful' do
+
+          patch '/api/v1/surveys/2', params: {survey: {isLive: false}}
+          expect(JSON.parse(response.body)["title"]).to eql('test2')
+          expect(JSON.parse(response.body)["isLive"]).to eql(false)
+          expect(JSON.parse(response.body)["wentLiveAt"]).not_to be(nil)
+          expect(JSON.parse(response.body)["closedOnDate"]).not_to be(nil)
+        end
+      end
     end
   end
 
   describe "negative tests" do
-    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil)}
-    let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: true, wentLiveAt: DateTime.now())}
+    let!(:survey) {Survey.create(title: "test", id: 1, isLive: false, wentLiveAt: nil, closedOnDate: nil)}
+    let!(:survey2) {Survey.create(title: "test2", id: 2, isLive: true, wentLiveAt: DateTime.now(), closedOnDate: nil)}
+    let!(:survey3) {Survey.create(title: "test3", id: 3, isLive: false, wentLiveAt: DateTime.now(), closedOnDate: DateTime.now())}
 
     describe "POST /api/v1/surveys/create with incorrect params" do
       context "suvey param is empty" do
@@ -225,13 +237,12 @@ RSpec.describe "Surveys", type: :request do
       end
     end
 
-    describe "PATCH /api/v1/surveys/:id with live survey" do
+    describe "PATCH /api/v1/surveys/:id with closed survey" do
 
-      it 'fails due to live survey' do
+      it 'fails due to closed survey' do
+        patch '/api/v1/surveys/3', params: {survey: {isLive: true} }
 
-        patch '/api/v1/surveys/2', params: {text_question: { question: "test question#2"} }
-
-        expect(JSON.parse(response.body)["notice"]).to eql('Failure! Cannot update live survey')
+        expect(JSON.parse(response.body)["notice"]).to eql('Failure! Cannot update closed survey')
       end
     end
   end

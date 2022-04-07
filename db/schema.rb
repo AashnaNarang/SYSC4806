@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_03_17_174955) do
+ActiveRecord::Schema[7.0].define(version: 2022_04_05_182410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "mc_options", force: :cascade do |t|
-    t.text "option"
+    t.string "option"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "mc_question_id"
@@ -51,11 +51,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_17_174955) do
   end
 
   create_table "surveys", force: :cascade do |t|
-    t.text "title"
+    t.string "title"
     t.boolean "isLive"
     t.datetime "wentLiveAt", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "closedOnDate"
   end
 
   create_table "text_questions", force: :cascade do |t|

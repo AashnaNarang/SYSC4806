@@ -1,11 +1,13 @@
 import React from 'react'
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography'
-import Card from '@mui/material/Card'
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import SurveyList from './SurveyList';
 import SurveyListActions from './SurveyListActions'
+import {
+    Button,
+    Paper,
+    Typography,
+    Card} from '@mui/material'
+import AddIcon from '@mui/icons-material/Add';
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } });
@@ -16,12 +18,29 @@ const Home = () => {
         <Card>
             <ThemeProvider theme={darkTheme}>
                 <Typography variant="h4" component="h3">
-                    Hey surveyors, Welcome to SurveyLab!
+                    Welcome to SurveyLab!
                 </Typography> 
                 <Paper variant="outlined" />
             </ThemeProvider>
             <br/>
+            <Button  
+                color="secondary"
+                startIcon={<AddIcon/>}
+                variant="outlined"
+                onClick={() => {
+                    location.href='/createSurvey';
+                }}
+            >
+                create survey
+            </Button>
             <br/>
+            <br/>
+            <ThemeProvider theme={darkTheme}>
+                <Typography variant="h6" component="h5">
+                    Your Surveys:
+                </Typography> 
+                <Paper variant="outlined" />
+            </ThemeProvider>
             <SurveyList></SurveyList>
         </Card>
     )
