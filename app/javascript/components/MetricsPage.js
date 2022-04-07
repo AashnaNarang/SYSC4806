@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
-import Typography from '@mui/material/Typography'
+import McMetrics from './metricTypes/McMetrics'
+import {
+    Button, 
+    Typography,
+    Box,
+    Stack,
+    Paper } from '@mui/material'
+
+    const questionType = {
+        "MULTIPLE_CHOICE": "mc",
+        "OPEN_ENDED": "text",
+        "NUMERICAL": "numerical",
+    }
 
 const MetricsPage = () => {
     const { surveyId } = useParams();
     const [baseUrl, setBaseUrl] = useState('');
     const [title, setTitle] = useState('');
+    const [responses, setResponses] = useState([]);
     
     const checkRequest = (res) => {
         if (res.status === 200) {
@@ -26,6 +39,7 @@ const MetricsPage = () => {
         .then(checkRequest)
         .then(data => {
             setTitle(data.survey.title);
+            setResponses(data.questions)
         })
         .catch(console.log);
     }, []);
@@ -33,8 +47,35 @@ const MetricsPage = () => {
     return(
         <div className="surveyResponses">
             <Typography variant="h2">{title}</Typography>
+            <br/>
+            <br/>
+            <Paper
+                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 600 }}
+            >
+                <Box
+                    sx={{
+                    '& .MuiTextField-root': { m: 1, width: '25ch' },
+                    }}
+                >
+                    {responses.map((response, i) => {
+                            switch(response.question_type) {
+                                case questionType.OPEN_ENDED:
+                                   return (<div>PUT YOUR TEXT THINGY HERE</div>)
+                                case questionType.MULTIPLE_CHOICE:
+                                    return (<McMetrics key={i} response={response}></McMetrics>)
+                            }
+                        })
+                    }
+                    <br/>
+
+                </Box>
+                
+            </Paper>
+            <br/>
+            <br/>
         </div>
     )
 }
+
 
 export default MetricsPage
