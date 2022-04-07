@@ -16,7 +16,7 @@ export default function TextMetrics(response) {
             disabled
             multiline          
             label="Answer List"
-            value=Object.keys(response.text_response)
+            value=Object.keys(response.text_responses)
             variant="outlined"
             size="small"
         </TextField>
