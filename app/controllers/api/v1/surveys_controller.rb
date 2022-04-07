@@ -53,16 +53,16 @@ class Api::V1::SurveysController < ApplicationController
   def update
     begin
       params = survey_params_update
+      if @survey.closedOnDate
+        return render json: {notice: 'Failure! Cannot update closed survey'}
+      end
+
       if params[:isLive]
         params[:wentLiveAt] = DateTime.now()
       end
-      
-      if params[:isLive] == "false"
-        @survey.closedOnDate = DateTime.now()
-      end
 
-      if @survey.closedOnDate
-        render json: {notice: 'Failure! Cannot update closed survey'}
+      if @survey.isLive & (params[:isLive] == "false" || params[:isLive] == false)
+        params[:closedOnDate] = DateTime.now()
       end
 
       if @survey.update(params)
