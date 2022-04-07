@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'
+import { Typography, Box, Paper } from '@mui/material'
+
 import McMetrics from './metricTypes/McMetrics'
-import {
-    Button, 
-    Typography,
-    Box,
-    Stack,
-    Paper } from '@mui/material'
+import TextMetrics from './metricTypes/TextMetrics';
 
     const questionType = {
         "MULTIPLE_CHOICE": "mc",
@@ -60,16 +57,14 @@ const MetricsPage = () => {
                     {responses.map((response, i) => {
                             switch(response.question_type) {
                                 case questionType.OPEN_ENDED:
-                                   return (<div>PUT YOUR TEXT THINGY HERE</div>)
+                                   return (<TextMetrics key={i} response={response}></TextMetrics>)
                                 case questionType.MULTIPLE_CHOICE:
                                     return (<McMetrics key={i} response={response}></McMetrics>)
                             }
                         })
                     }
                     <br/>
-
-                </Box>
-                
+                </Box>              
             </Paper>
             <br/>
             <br/>
